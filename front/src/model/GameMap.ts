@@ -135,8 +135,14 @@ export default class GameMap {
   }
 
   drawMap() {
-    const playerViewX = 0; /* innerWidth / 2; */
-    const playerViewY = 0; /* innerHeight / 2; */
+    const playerViewX =
+      -(master.me?.x || 0) +
+      innerWidth / 2 -
+      (SIZE.UNIT * SIZE.SCALE) / 2; /* innerWidth / 2; */
+    const playerViewY =
+      -(master.me?.y || 0) +
+      innerHeight / 2 +
+      (SIZE.UNIT * SIZE.SCALE) / 2; /* innerHeight / 2; */
     const size = SIZE.BLOCK * SIZE.SCALE;
     const binary = this.binary;
 

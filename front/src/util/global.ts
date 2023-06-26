@@ -8,6 +8,7 @@ export enum COLOR {
   ROAD = "#cccccc", // road
   UNIT = "#ffff00", // unit
   NPC = "#ff0ff0", // unit
+  NAME = "#ff0fff", // unit
 }
 export const master: {
   me: User | null;
@@ -26,7 +27,7 @@ export const JOYSTICK = {
 };
 export const players = new Map<number, User>();
 export const UNIT = {
-  NPC: new Map<string, NPC>(),
+  NPC: new Map<number, NPC>(),
 };
 
 export const SIZE = {
