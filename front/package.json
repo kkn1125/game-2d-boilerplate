@@ -1,0 +1,22 @@
+{
+  "name": "front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "protobufjs": "^7.2.3"
+  },
+  "devDependencies": {
+    "@types/protobufjs": "^6.0.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.3.1",
+    "path": "^0.12.7",
+    "sass": "^1.63.6"
+  }
+}
