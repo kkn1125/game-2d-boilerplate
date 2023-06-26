@@ -1,28 +1,10 @@
+import list from "../map/list";
 import { COLOR, ctx, JOYSTICK, master, SIZE } from "../util/global";
 
 export default class GameMap {
   binary: number[][];
   constructor(mapBinary: string = "") {
-    const map =
-      mapBinary ||
-      `
-    100000010000000
-    010000011110000
-    010000000010000
-    010000000011000
-    010000000001111
-    111111111001000
-    010000001001000
-    010011111111111
-    111110001001000
-    000011111001000
-    000010001001000
-    000010001001111
-    111110001000000
-    000010001110000
-    000010000010000
-    000010000010000
-    `;
+    const map = mapBinary || list.home;
     this.binary = this.convertToMap(map);
   }
 
@@ -153,6 +135,8 @@ export default class GameMap {
   }
 
   drawMap() {
+    const playerViewX = 0; /* innerWidth / 2; */
+    const playerViewY = 0; /* innerHeight / 2; */
     const size = SIZE.BLOCK * SIZE.SCALE;
     const binary = this.binary;
 
@@ -164,7 +148,7 @@ export default class GameMap {
 
       /* half map top 1/2 */
       for (let ci = 0; ci < bRow.length / 2; ci++) {
-        const columnMirror = bRow.length - ci;
+        const columnMirror = bRow.length - ci - 1;
         const column = ci;
         const bColumnMirror = bRow[columnMirror];
         const bColumn = bRow[column];
@@ -173,32 +157,52 @@ export default class GameMap {
         /* half column top-left */
         if (bColumn === 0) {
           ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(column * size, row * size, size, size);
+          ctx.fillRect(
+            column * size + playerViewX,
+            row * size + playerViewY,
+            size,
+            size
+          );
         }
 
         /* half column top-right */
         if (bColumnMirror === 0) {
           ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(columnMirror * size, row * size, size, size);
+          ctx.fillRect(
+            columnMirror * size + playerViewX,
+            row * size + playerViewY,
+            size,
+            size
+          );
         }
 
         /* Roads */
         /* half column top-left */
         if (bColumn === 1) {
           ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(column * size, row * size, size, size);
+          ctx.fillRect(
+            column * size + playerViewX,
+            row * size + playerViewY,
+            size,
+            size
+          );
         }
 
         /* half column top-right */
         if (bColumnMirror === 1) {
           ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(columnMirror * size, row * size, size, size);
+          ctx.fillRect(
+            columnMirror * size + playerViewX,
+            row * size + playerViewY,
+            size,
+            size
+          );
         }
       }
 
       /* half map bottom 2/2 */
       for (let ci = 0; ci < bRowMirror.length / 2; ci++) {
-        const columnMirror = Math.floor(bRowMirror.length) - ci;
+        const columnMirror = Math.floor(bRowMirror.length) - ci - 1;
         const column = ci;
         const bColumnMirror = bRowMirror[columnMirror];
         const bColumn = bRowMirror[column];
@@ -207,26 +211,46 @@ export default class GameMap {
         /* half column bottom-left */
         if (bColumn === 0) {
           ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(column * size, rowMirror * size, size, size);
+          ctx.fillRect(
+            column * size + playerViewX,
+            rowMirror * size + playerViewY,
+            size,
+            size
+          );
         }
 
         /* half column bottom-right */
         if (bColumnMirror === 0) {
           ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(columnMirror * size, rowMirror * size, size, size);
+          ctx.fillRect(
+            columnMirror * size + playerViewX,
+            rowMirror * size + playerViewY,
+            size,
+            size
+          );
         }
 
         /* Roads */
         /* half column bottom-left */
         if (bColumn === 1) {
           ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(column * size, rowMirror * size, size, size);
+          ctx.fillRect(
+            column * size + playerViewX,
+            rowMirror * size + playerViewY,
+            size,
+            size
+          );
         }
 
         /* half column bottom-right */
         if (bColumnMirror === 1) {
           ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(columnMirror * size, rowMirror * size, size, size);
+          ctx.fillRect(
+            columnMirror * size + playerViewX,
+            rowMirror * size + playerViewY,
+            size,
+            size
+          );
         }
       }
     }

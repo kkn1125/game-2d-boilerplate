@@ -32,8 +32,10 @@ export default class Unit {
   }
 
   goSpawn(x: number = 0, y: number = 0) {
-    this.x = x + SIZE.BLOCK * SIZE.SCALE * 1;
-    this.y = y + SIZE.BLOCK * SIZE.SCALE * 1;
+    // this.x = x + SIZE.BLOCK * SIZE.SCALE * 1;
+    // this.y = y + SIZE.BLOCK * SIZE.SCALE * 1;
+    this.x = innerWidth / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
+    this.y = innerHeight / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
   }
 
   move() {
@@ -50,6 +52,9 @@ export default class Unit {
   }
 
   render() {
+    const x = innerWidth / 2 + (SIZE.UNIT * SIZE.SCALE) / 2;
+    const y = innerHeight / 2 + (SIZE.UNIT * SIZE.SCALE) / 2;
+
     this.move();
     ctx.fillStyle = this.color;
     ctx.fillRect(
