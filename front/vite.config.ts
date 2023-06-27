@@ -22,5 +22,6 @@ export default defineConfig(({ command, mode }) => {
       host: process.env.HOST,
       port: Number(process.env.PORT) || 3000,
     },
+    base: "",
   };
 });

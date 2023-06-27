@@ -12,7 +12,7 @@ const testUser = new User("test");
 master.me = testUser;
 
 const engine = new Engine();
-engine.activeGuideLine = true;
+engine.activeGuideLine = false;
 engine.initUI(ui);
 engine.initRayPointer(rayPointer);
 engine.addNpc(...NpcList);
