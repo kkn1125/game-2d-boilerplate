@@ -1,12 +1,20 @@
+import NPC from "../model/NPC";
 import { canvas, JOYSTICK, master, UNIT } from "../util/global";
+import RayPointer from "./RayPointer";
 
 export default class EventListener {
   constructor() {
     window.addEventListener("load", this.handleResizeCanvas.bind(this));
     window.addEventListener("resize", this.handleResizeCanvas.bind(this));
-    window.addEventListener("click", this.handleChatClick.bind(this));
+    window.addEventListener("click", this.handleNpcClick.bind(this));
     window.addEventListener("keydown", this.handleJoyStickDown.bind(this));
     window.addEventListener("keyup", this.handleJoyStickUp.bind(this));
+  }
+
+  rayPointer: RayPointer;
+
+  initRayPointer(rayPointer: RayPointer) {
+    this.rayPointer = rayPointer;
   }
 
   handleJoyStickDown(e: KeyboardEvent) {
@@ -40,15 +48,14 @@ export default class EventListener {
     this.canvasSize();
   }
 
-  handleChatClick(e: MouseEvent) {
-    const target = e.target as HTMLButtonElement;
-    const type = target.dataset.type;
-    const npcName = target.dataset.npc;
-    if (type === "talk" && npcName) {
-      const npc = UNIT.NPC.get(npcName);
-      if (npc) {
-        npc.talk();
-      }
+  handleNpcClick(e: MouseEvent) {
+    // const target = e.target as HTMLButtonElement;
+    // const type = target.dataset.type;
+    // const npcNum = Number(target.dataset.npcNum);
+    const npc = this.rayPointer.selector?.[0] as NPC;
+    if (npc) {
+      console.log(npc);
+      npc.talk();
     }
   }
 }

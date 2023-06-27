@@ -14,21 +14,21 @@ export default class ChatQueue {
     return message.autoClose;
   }
 
-  async talk(nickname: string) {
+  talk(nickname: string) {
     const message = this.chattings.shift();
     if (message) {
-      message.setOpen()?.then((res) => {
-        if (res) {
+      message.setOpen((isNext: boolean) => {
+        if (isNext) {
           this.talk(nickname);
         }
       });
       this.temp.push(message);
-      console.log(`${nickname}: ${message.message}`);
+      // console.log(`${nickname}: ${message.message}`);
       return message;
     } else {
       this.chattings.push(...this.temp.splice(0));
-      console.log(`${nickname}: ${"bye"}`);
-      return {};
+      // console.log(`${nickname}: ${"bye"}`);
+      return null;
     }
   }
 

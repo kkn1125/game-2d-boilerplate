@@ -1,17 +1,35 @@
 import GameMap from "../model/GameMap";
 import NPC from "../model/NPC";
+import UI from "../model/UI";
 import Unit from "../model/Unit";
 import { ctx, master, UNIT } from "../util/global";
 import EventListener from "./EventListener";
+import RayPointer from "./RayPointer";
 
 export default class Engine {
   map: GameMap;
   eventListener: EventListener;
+  ui: UI;
+  rayPointer: RayPointer;
 
   constructor() {
     this.initListener();
     this.initMap();
     this.render.call(this);
+  }
+  initListener() {
+    this.eventListener = new EventListener();
+  }
+  initMap() {
+    const map = new GameMap();
+    this.map = map;
+  }
+  initUI(ui: UI) {
+    this.ui = ui;
+  }
+  initRayPointer(rayPointer: RayPointer) {
+    this.rayPointer = rayPointer;
+    this.eventListener.initRayPointer(this.rayPointer);
   }
 
   addPlayer(...units: Unit[]) {
@@ -22,16 +40,9 @@ export default class Engine {
 
   addNpc(...units: NPC[]) {
     for (let unit of units) {
+      unit.initUI(this.ui);
       UNIT.NPC.set(unit.id, unit);
     }
-  }
-
-  initListener() {
-    this.eventListener = new EventListener();
-  }
-  initMap() {
-    const map = new GameMap();
-    this.map = map;
   }
 
   clearCanvas() {

@@ -10,10 +10,11 @@ export default class Message {
     this.autoClose = autoClose;
   }
 
-  setOpen() {
+  setOpen(cb: Function) {
     this.open = true;
+
     if (this.autoClose) {
-      return this.intervalClose();
+      this.intervalClose(cb);
     }
   }
 
@@ -21,17 +22,10 @@ export default class Message {
     this.open = false;
   }
 
-  intervalClose() {
-    let resolver: (value: unknown) => void = () => {};
-
+  intervalClose(cb: Function) {
     let flag = setTimeout(() => {
-      if (!this.open) {
-        clearTimeout(flag);
-        resolver(false);
-      }
       this.setClose();
-      resolver(true);
+      cb(true);
     }, 5000);
-    return new Promise((resolve) => (resolver = resolve));
   }
 }

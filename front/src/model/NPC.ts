@@ -1,5 +1,6 @@
 import { COLOR, ctx, master, SIZE, UNIT } from "../util/global";
 import ChatQueue from "./ChatQueue";
+import UI from "./UI";
 import Unit from "./Unit";
 
 export default class NPC extends Unit {
@@ -11,21 +12,30 @@ export default class NPC extends Unit {
     }
     this.setColor(COLOR.NPC);
   }
+  ui: UI;
   hello: boolean = false;
   question: boolean = false;
   chatQueue: ChatQueue = new ChatQueue();
 
   nearBy: boolean = false;
 
+  initUI(ui: UI) {
+    this.ui = ui;
+  }
+
   addStaticMessage(message: string) {
     this.chatQueue.addMessage(message, false);
   }
+
   addAutoMessage(message: string) {
     this.chatQueue.addMessage(message, true);
   }
 
   talk() {
-    this.chatQueue.talk(this.name);
+    const message = this.chatQueue.talk(this.name);
+    if (message) {
+      this.ui.openModal(this.name, message.message);
+    }
   }
 
   talkExit() {
@@ -44,8 +54,10 @@ export default class NPC extends Unit {
         topSide < player.y &&
         player.y < bottomSide
       ) {
+        this.nearBy = true;
         this.onHello();
       } else {
+        this.nearBy = false;
         this.offHello();
       }
     });
