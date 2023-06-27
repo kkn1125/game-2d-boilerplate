@@ -5,3 +5,85 @@ body,
   height: 100%;
   overflow: hidden;
 }
+
+.chat-modal {
+  &.modal {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    width: 90%;
+    transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    background-color: white;
+    padding: 1rem;
+    box-shadow: 0 0 1rem 0.1rem #00000056;
+    border-radius: 0.3rem;
+    -webkit-border-radius: 0.3rem;
+    -moz-border-radius: 0.3rem;
+    -ms-border-radius: 0.3rem;
+    -o-border-radius: 0.3rem;
+  }
+  &.title {
+    font-weight: 700;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    &::before {
+      content: "[NPC]";
+    }
+  }
+  &.content {
+    font-size: 1.5rem;
+    font-weight: 200;
+    min-height: 100px;
+    max-height: 150px;
+    overflow: auto;
+    &::after {
+      content: ".";
+    }
+  }
+
+  &.btn-wrap {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+
+    .exit-btn,
+    .next-btn {
+      cursor: pointer;
+      
+      color: #ffffff;
+      outline: none;
+
+      border: none;
+      padding: 0.5rem 0.8rem;
+
+      border-radius: 0;
+      -webkit-border-radius: 0;
+      -moz-border-radius: 0;
+      -ms-border-radius: 0;
+      -o-border-radius: 0;
+    }
+
+    .exit-btn {
+      background-color: #ff4f5e;
+      &::before {
+        content: "exit";
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+      }
+    }
+    .next-btn {
+      background-color: #4f6fff;
+      &::before {
+        content: "next";
+        font-weight: 700;
+        font-size: 1rem;
+        text-transform: uppercase;
+      }
+    }
+  }
+}

@@ -9,11 +9,11 @@ const ui = new UI();
 const rayPointer = new RayPointer();
 
 const npc1 = new NPC("Devian");
-npc1.setPosition(2, 9);
-npc1.addAutoMessage("hi");
-npc1.addAutoMessage("my name is kimson");
-// npc1.addStaticMessage("hi");
-// npc1.addStaticMessage("my name is kimson");
+npc1.setPosition(24, 5);
+// npc1.addAutoMessage("hi");
+// npc1.addAutoMessage("my name is kimson");
+npc1.addStaticMessage("hi");
+npc1.addStaticMessage("my name is kimson");
 
 const testUser = new User("test");
 master.me = testUser;

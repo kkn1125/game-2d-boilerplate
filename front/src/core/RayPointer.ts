@@ -49,11 +49,15 @@ export default class RayPointer {
       if (inHorizontal && inVertical) {
         // select npc
         if (npc.nearBy) {
-          console.log("do question");
-          this.selector[0] = npc;
+          // console.log("do question");
+          if (!this.selector[0]) {
+            this.selector[0] = npc;
+          }
         } else {
-          this.selector.pop();
+          this.selector = [];
         }
+      } else {
+        this.selector = [];
       }
     });
     // console.log(xIndex, yIndex);

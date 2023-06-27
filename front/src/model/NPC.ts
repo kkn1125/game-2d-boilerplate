@@ -1,4 +1,4 @@
-import { COLOR, ctx, master, SIZE, UNIT } from "../util/global";
+import { COLOR, ctx, master, SIZE } from "../util/global";
 import ChatQueue from "./ChatQueue";
 import UI from "./UI";
 import Unit from "./Unit";
@@ -19,6 +19,10 @@ export default class NPC extends Unit {
 
   nearBy: boolean = false;
 
+  flag: "up" | "down" = "up";
+  bound: number = 10;
+  startBound: number = 0;
+
   initUI(ui: UI) {
     this.ui = ui;
   }
@@ -32,14 +36,24 @@ export default class NPC extends Unit {
   }
 
   talk() {
-    const message = this.chatQueue.talk(this.name);
+    const npc = this;
+    const message = this.chatQueue.talk((isNext: boolean) => {
+      if (isNext) {
+        npc.talk();
+      }
+    });
+
     if (message) {
-      this.ui.openModal(this.name, message.message);
+      this.ui.openModal(this.id, this.name, message.message);
+    } else {
+      UI.clearChatModals();
+      this.talkExit();
     }
   }
 
   talkExit() {
     this.chatQueue.stop();
+    if (master.me) master.me.velocity = master.velocity;
   }
 
   detectNearByPlayer() {
@@ -70,14 +84,29 @@ export default class NPC extends Unit {
     super.render();
 
     if (this.hello) {
-      ctx.font = "bold 36px sans-serif";
+      const size = this.startBound;
+
+      ctx.font = `bold 36px sans-serif`;
       ctx.fillStyle = COLOR.WARN;
       ctx.fillText(
         "?",
         x + this.x - (master.me?.x || 0) + (SIZE.UNIT * SIZE.SCALE) / 2,
-        y + this.y - (master.me?.y || 0) - SIZE.UNIT * SIZE.SCALE - 10,
+        size + y + this.y - (master.me?.y || 0) - SIZE.UNIT * SIZE.SCALE - 10,
         2 * SIZE.SCALE
       );
+      if (this.flag === "up") {
+        if (this.startBound < this.bound) {
+          this.startBound += 0.5;
+        } else {
+          this.flag = "down";
+        }
+      } else if (this.flag === "down") {
+        if (this.startBound > 0) {
+          this.startBound -= 0.5;
+        } else {
+          this.flag = "up";
+        }
+      }
     }
   }
 

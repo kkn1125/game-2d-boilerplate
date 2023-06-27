@@ -17,18 +17,23 @@ export default class Engine {
     this.initMap();
     this.render.call(this);
   }
+
   initListener() {
     this.eventListener = new EventListener();
   }
+
   initMap() {
     const map = new GameMap();
     this.map = map;
   }
+
   initUI(ui: UI) {
     this.ui = ui;
   }
+
   initRayPointer(rayPointer: RayPointer) {
     this.rayPointer = rayPointer;
+    this.eventListener.initUI(this.ui);
     this.eventListener.initRayPointer(this.rayPointer);
   }
 

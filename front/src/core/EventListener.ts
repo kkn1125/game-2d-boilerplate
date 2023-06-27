@@ -1,4 +1,5 @@
 import NPC from "../model/NPC";
+import UI from "../model/UI";
 import { canvas, JOYSTICK, master, UNIT } from "../util/global";
 import RayPointer from "./RayPointer";
 
@@ -7,11 +8,20 @@ export default class EventListener {
     window.addEventListener("load", this.handleResizeCanvas.bind(this));
     window.addEventListener("resize", this.handleResizeCanvas.bind(this));
     window.addEventListener("click", this.handleNpcClick.bind(this));
-    window.addEventListener("keydown", this.handleJoyStickDown.bind(this));
+    window.addEventListener(
+      "keydown",
+      this.handleJoyStickDown.bind(this),
+      false
+    );
     window.addEventListener("keyup", this.handleJoyStickUp.bind(this));
   }
 
+  ui: UI;
   rayPointer: RayPointer;
+
+  initUI(ui: UI) {
+    this.ui = ui;
+  }
 
   initRayPointer(rayPointer: RayPointer) {
     this.rayPointer = rayPointer;
@@ -19,7 +29,15 @@ export default class EventListener {
 
   handleJoyStickDown(e: KeyboardEvent) {
     const key = e.key as KeySet;
-    if (JOYSTICK.hasOwnProperty(key)) {
+    if ((key as OtherKeySet) === " ") {
+      UNIT.NPC.forEach((npc) => {
+        if (npc.nearBy && npc.chatQueue.temp.length === 0) {
+          npc.talk();
+          if (master.me) master.me.velocity = 0;
+        }
+      });
+    }
+    if (JOYSTICK.hasOwnProperty(key) && !UI.isOpenModal()) {
       JOYSTICK[key] = true;
       if (master.me) {
         master.me.velocity = master.velocity;
@@ -53,8 +71,7 @@ export default class EventListener {
     // const type = target.dataset.type;
     // const npcNum = Number(target.dataset.npcNum);
     const npc = this.rayPointer.selector?.[0] as NPC;
-    if (npc) {
-      console.log(npc);
+    if (npc && npc.nearBy && npc.chatQueue.temp.length === 0) {
       npc.talk();
     }
   }

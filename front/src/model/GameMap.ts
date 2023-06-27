@@ -1,5 +1,12 @@
 import list from "../map/list";
-import { COLOR, ctx, JOYSTICK, master, SIZE } from "../util/global";
+import {
+  COLOR,
+  ctx,
+  FIELD_VALUE,
+  JOYSTICK,
+  master,
+  SIZE,
+} from "../util/global";
 
 export default class GameMap {
   binary: number[][];
@@ -96,38 +103,43 @@ export default class GameMap {
     // console.log("=========================================");
 
     if (
-      binary[indexT][indexL] === 0 ||
-      binary[indexT][indexR] === 0 ||
-      (topCenterBlock === 0 && (topLeftBlock === 0 || topRightBlock === 0))
+      binary[indexT][indexL] === FIELD_VALUE["block"] ||
+      binary[indexT][indexR] === FIELD_VALUE["block"] ||
+      (topCenterBlock === FIELD_VALUE["block"] &&
+        (topLeftBlock === FIELD_VALUE["block"] ||
+          topRightBlock === FIELD_VALUE["block"]))
     ) {
       // console.log("상 충돌");
       master.me.y += nockbackSpeed;
     }
     if (
-      binary[indexCenterY][indexL] === 0 &&
-      (binary[indexT][indexL] === 0 ||
-        binary[indexB][indexL] === 0 ||
-        (leftCenterBlock === 0 &&
-          (topLeftBlock === 0 || bottomLeftBlock === 0)))
+      binary[indexCenterY][indexL] === FIELD_VALUE["block"] &&
+      (binary[indexT][indexL] === FIELD_VALUE["block"] ||
+        binary[indexB][indexL] === FIELD_VALUE["block"] ||
+        (leftCenterBlock === FIELD_VALUE["block"] &&
+          (topLeftBlock === FIELD_VALUE["block"] ||
+            bottomLeftBlock === FIELD_VALUE["block"])))
     ) {
       // console.log("좌 충돌");
       master.me.x += nockbackSpeed;
     }
     if (
-      binary[indexCenterY][indexR] === 0 &&
-      (binary[indexT][indexR] === 0 ||
-        binary[indexB][indexR] === 0 ||
-        (rightCenterBlock === 0 &&
-          (topRightBlock === 0 || bottomRightBlock === 0)))
+      binary[indexCenterY][indexR] === FIELD_VALUE["block"] &&
+      (binary[indexT][indexR] === FIELD_VALUE["block"] ||
+        binary[indexB][indexR] === FIELD_VALUE["block"] ||
+        (rightCenterBlock === FIELD_VALUE["block"] &&
+          (topRightBlock === FIELD_VALUE["block"] ||
+            bottomRightBlock === FIELD_VALUE["block"])))
     ) {
       // console.log("우 충돌");
       master.me.x -= nockbackSpeed;
     }
     if (
-      binary[indexB][indexL] === 0 ||
-      binary[indexB][indexR] === 0 ||
-      (bottomCenterBlock === 0 &&
-        (bottomLeftBlock === 0 || bottomRightBlock === 0))
+      binary[indexB][indexL] === FIELD_VALUE["block"] ||
+      binary[indexB][indexR] === FIELD_VALUE["block"] ||
+      (bottomCenterBlock === FIELD_VALUE["block"] &&
+        (bottomLeftBlock === FIELD_VALUE["block"] ||
+          bottomRightBlock === FIELD_VALUE["block"]))
     ) {
       // console.log("하 충돌");
       master.me.y -= nockbackSpeed;
@@ -161,7 +173,7 @@ export default class GameMap {
 
         /* Blocks */
         /* half column top-left */
-        if (bColumn === 0) {
+        if (bColumn === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
             column * size + playerViewX,
@@ -172,7 +184,7 @@ export default class GameMap {
         }
 
         /* half column top-right */
-        if (bColumnMirror === 0) {
+        if (bColumnMirror === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
             columnMirror * size + playerViewX,
@@ -184,7 +196,7 @@ export default class GameMap {
 
         /* Roads */
         /* half column top-left */
-        if (bColumn === 1) {
+        if (bColumn === FIELD_VALUE["road"]) {
           ctx.fillStyle = COLOR.ROAD;
           ctx.fillRect(
             column * size + playerViewX,
@@ -195,7 +207,7 @@ export default class GameMap {
         }
 
         /* half column top-right */
-        if (bColumnMirror === 1) {
+        if (bColumnMirror === FIELD_VALUE["road"]) {
           ctx.fillStyle = COLOR.ROAD;
           ctx.fillRect(
             columnMirror * size + playerViewX,
@@ -215,7 +227,7 @@ export default class GameMap {
 
         /* Blocks */
         /* half column bottom-left */
-        if (bColumn === 0) {
+        if (bColumn === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
             column * size + playerViewX,
@@ -226,7 +238,7 @@ export default class GameMap {
         }
 
         /* half column bottom-right */
-        if (bColumnMirror === 0) {
+        if (bColumnMirror === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
             columnMirror * size + playerViewX,
@@ -238,7 +250,7 @@ export default class GameMap {
 
         /* Roads */
         /* half column bottom-left */
-        if (bColumn === 1) {
+        if (bColumn === FIELD_VALUE["road"]) {
           ctx.fillStyle = COLOR.ROAD;
           ctx.fillRect(
             column * size + playerViewX,
@@ -249,7 +261,7 @@ export default class GameMap {
         }
 
         /* half column bottom-right */
-        if (bColumnMirror === 1) {
+        if (bColumnMirror === FIELD_VALUE["road"]) {
           ctx.fillStyle = COLOR.ROAD;
           ctx.fillRect(
             columnMirror * size + playerViewX,

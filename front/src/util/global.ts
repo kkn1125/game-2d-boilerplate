@@ -41,3 +41,14 @@ export const canvas = document.createElement("canvas") as HTMLCanvasElement;
 export const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
 APP().append(canvas);
+
+export enum FIELD_VALUE {
+  block = 0,
+  road = 1,
+  grass = 2,
+  water = 3,
+  tree = 4,
+  flower = 5,
+  wall = 6,
+  dummy = 7,
+}

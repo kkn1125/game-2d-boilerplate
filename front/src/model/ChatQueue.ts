@@ -14,14 +14,10 @@ export default class ChatQueue {
     return message.autoClose;
   }
 
-  talk(nickname: string) {
+  talk(cb: Function) {
     const message = this.chattings.shift();
     if (message) {
-      message.setOpen((isNext: boolean) => {
-        if (isNext) {
-          this.talk(nickname);
-        }
-      });
+      message.setOpen(cb);
       this.temp.push(message);
       // console.log(`${nickname}: ${message.message}`);
       return message;
