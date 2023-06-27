@@ -8,6 +8,7 @@ import {
   master,
   SIZE,
   TEXTURE,
+  UNIT,
 } from "../util/global";
 
 export default class GameMap {
@@ -150,15 +151,84 @@ export default class GameMap {
     }
   }
 
-  drawMap() {
-    const unitSize = SIZE.UNIT() * SIZE.SCALE();
-    const blockSize = SIZE.BLOCK() * SIZE.SCALE();
+  miniMap(x: number, y: number, scale: number) {
+    this.drawMap({ x, y, scale });
+    this.miniMapNPC(x, y, scale);
+    this.miniMapPlayer(x, y, scale);
+  }
+
+  miniMapPlayer(x: number, y: number, scale: number) {
+    master.units.forEach((user) => {
+      const userX = user.x * CONTROL.SCALE * scale;
+      const userY = user.y * CONTROL.SCALE * scale;
+      const unitSize = SIZE.UNIT() * SIZE.SCALE();
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = COLOR.BLACK;
+      ctx.font = `bold ${36 * scale * 3}px sans-serif`;
+      ctx.fillText(user.name, userX - x * scale, userY - y * scale - 2);
+      ctx.fillStyle = COLOR.UNIT;
+      ctx.fillRect(
+        userX - x * scale,
+        userY - y * scale,
+        unitSize * scale,
+        unitSize * scale
+      );
+    });
+  }
+
+  miniMapNPC(x: number, y: number, scale: number) {
+    UNIT.NPC.forEach((npc) => {
+      const npcX = npc.x * CONTROL.SCALE * scale;
+      const npcY = npc.y * CONTROL.SCALE * scale;
+      const unitSize = SIZE.UNIT() * SIZE.SCALE();
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = COLOR.BLACK;
+      ctx.font = `bold ${36 * scale * 3}px sans-serif`;
+      ctx.fillText(npc.name, npcX - x * scale, npcY - y * scale - 2);
+      ctx.fillStyle = COLOR.NPC;
+      ctx.fillRect(
+        npcX - x * scale,
+        npcY - y * scale,
+        unitSize * scale,
+        unitSize * scale
+      );
+    });
+  }
+
+  drawMap(
+    option: { x: number; y: number; scale: number } | undefined = undefined
+  ) {
+    const miniMapX = option?.x;
+    const miniMapY = option?.y;
+    const miniMapScale = option?.scale || 1;
+
+    const unitSize = SIZE.UNIT() * SIZE.SCALE() * miniMapScale;
+    const blockSize = SIZE.BLOCK() * SIZE.SCALE() * miniMapScale;
     const playerViewX =
-      -(master.me?.x || 0) * CONTROL.SCALE + CAMERA.X(); /* innerWidth / 2; */
+      -(miniMapX !== undefined ? miniMapX : master.me?.x || 0) *
+        CONTROL.SCALE *
+        miniMapScale +
+      (miniMapX !== undefined ? 0 : CAMERA.X()); /* innerWidth / 2; */
     const playerViewY =
-      -(master.me?.y || 0) * CONTROL.SCALE + CAMERA.Y(); /* innerHeight / 2; */
+      -(miniMapY !== undefined ? miniMapY : master.me?.y || 0) *
+        CONTROL.SCALE *
+        miniMapScale +
+      (miniMapY !== undefined ? 0 : CAMERA.Y()); /* innerHeight / 2; */
 
     const binary = this.binary;
+
+    if (miniMapX && miniMapY && miniMapScale) {
+      const padding = 2;
+      ctx.fillStyle = COLOR.WARN;
+      ctx.fillRect(
+        playerViewX - padding,
+        playerViewY - padding,
+        this.binary[0].length * blockSize + padding * 2,
+        this.binary.length * blockSize + padding * 2
+      );
+    }
 
     for (let ri = 0; ri < binary.length / 2; ri++) {
       const rowMirror = binary.length - ri - 1;

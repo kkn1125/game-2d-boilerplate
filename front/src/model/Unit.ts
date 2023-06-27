@@ -69,34 +69,30 @@ export default class Unit {
     const x = CAMERA.X();
     const y = CAMERA.Y();
 
-    const responsivePositionX= x + this.x * CONTROL.SCALE - (master.me?.x || 0) * CONTROL.SCALE
-    const responsivePositionY= y + this.y * CONTROL.SCALE - (master.me?.y || 0) * CONTROL.SCALE
+    const responsivePositionX =
+      x + this.x * CONTROL.SCALE - (master.me?.x || 0) * CONTROL.SCALE;
+    const responsivePositionY =
+      y + this.y * CONTROL.SCALE - (master.me?.y || 0) * CONTROL.SCALE;
 
     this.move();
-    ctx.fillStyle = COLOR.NAME;
+    ctx.fillStyle = this.constructor.name === "NPC" ? COLOR.NPC : COLOR.NAME;
     ctx.textAlign = "center";
     ctx.font = `bold ${16 * SIZE.SCALE() * 0.1}px sans-serif`;
     ctx.fillText(
-      this.name,
+      this.name.toUpperCase(),
       master.me?.id === this.id
         ? x + (SIZE.UNIT() * SIZE.SCALE()) / 2
-        : responsivePositionX +
-            (SIZE.UNIT() * SIZE.SCALE()) / 2,
+        : responsivePositionX + (SIZE.UNIT() * SIZE.SCALE()) / 2,
       master.me?.id === this.id
         ? y - (SIZE.UNIT() * SIZE.SCALE()) / 2
-        : responsivePositionY -
-            (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : responsivePositionY - (SIZE.UNIT() * SIZE.SCALE()) / 2
     );
     ctx.fillStyle = this.color;
     ctx.fillRect(
       // this.x,
       // this.y,
-      master.me?.id === this.id
-        ? x
-        : responsivePositionX,
-      master.me?.id === this.id
-        ? y
-        : responsivePositionY,
+      master.me?.id === this.id ? x : responsivePositionX,
+      master.me?.id === this.id ? y : responsivePositionY,
       // 0,
       // 0,
       SIZE.UNIT() * SIZE.SCALE(),

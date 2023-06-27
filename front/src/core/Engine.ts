@@ -59,6 +59,7 @@ export default class Engine {
     this.clearCanvas();
     if (this.map) {
       this.map.render();
+      this.map.miniMap(-200, -200, 0.1);
     }
     UNIT.NPC.forEach((npc: NPC) => {
       npc.render();

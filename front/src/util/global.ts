@@ -12,8 +12,10 @@ export enum COLOR {
   BLOCK = "#555555", // block
   ROAD = "#cccccc", // road
   UNIT = "#ffff00", // unit
-  NPC = "#ff0ff0", // unit
-  NAME = "#ff0fff", // unit
+  NPC = "#bc0fab", // unit
+  NAME = "#222222", // unit
+  DEVIAN = "#0ff0ff", // unit
+  MOMO = "#9a2fa0", // unit
 }
 
 export const CONTROL = {
