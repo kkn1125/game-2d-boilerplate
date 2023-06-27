@@ -2,7 +2,7 @@ import GameMap from "../model/GameMap";
 import NPC from "../model/NPC";
 import UI from "../model/UI";
 import Unit from "../model/Unit";
-import { ctx, master, UNIT } from "../util/global";
+import { COLOR, ctx, master, UNIT } from "../util/global";
 import EventListener from "./EventListener";
 import RayPointer from "./RayPointer";
 
@@ -67,6 +67,16 @@ export default class Engine {
     master.units.forEach((unit) => {
       unit.render();
     });
+    this.guideLine();
     requestAnimationFrame(this.render.bind(this));
+  }
+
+  guideLine() {
+    /* vertical guide line */
+    ctx.fillStyle = COLOR.BLACK;
+    ctx.fillRect(innerWidth / 2, 0, 1, innerHeight);
+    /* horizontal guide line */
+    ctx.fillStyle = COLOR.BLACK;
+    ctx.fillRect(0, innerHeight / 2, innerWidth, 1);
   }
 }

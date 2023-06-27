@@ -1,4 +1,4 @@
-import { UNIT } from "../util/global";
+import { DEFAULT_NPC_IMG, UNIT } from "../util/global";
 
 export default class UI {
   static clearChatModals() {
@@ -21,9 +21,15 @@ export default class UI {
     const title = UI.createEl("div");
     title.classList.add("chat-modal", "title");
     title.innerHTML = name;
+    const profile = UI.createEl("div") as HTMLImageElement;
+    profile.classList.add("profile");
+    profile.style.setProperty("background-image", `url(${DEFAULT_NPC_IMG})`);
     const content = UI.createEl("div");
-    content.classList.add("chat-modal", "content");
+    content.classList.add("content");
     content.innerHTML = message;
+    const ctnWrap = UI.createEl("div");
+    ctnWrap.classList.add("chat-modal", "content-wrap");
+    ctnWrap.append(profile, content);
     const nextBtn = UI.createEl("button");
     nextBtn.classList.add("next-btn");
     const exitBtn = UI.createEl("button");
@@ -32,18 +38,19 @@ export default class UI {
     btnWrap.classList.add("chat-modal", "btn-wrap");
     btnWrap.append(nextBtn, exitBtn);
 
-    modal.append(title, content, btnWrap);
+    modal.append(title, ctnWrap, btnWrap);
 
     function handleTalk(e: MouseEvent) {
       const target = e.target as HTMLButtonElement;
-      modal.remove();
       if (target === nextBtn) {
+        modal.remove();
         UNIT.NPC.forEach((npc) => {
           if (npc.id === id) {
             npc.talk();
           }
         });
       } else if (target === exitBtn) {
+        modal.remove();
         UNIT.NPC.forEach((npc) => {
           if (npc.id === id) {
             npc.talkExit();
@@ -52,7 +59,10 @@ export default class UI {
       }
     }
 
-    modal.addEventListener("click", handleTalk.bind(this), {
+    nextBtn.addEventListener("click", handleTalk.bind(this), {
+      once: true,
+    });
+    exitBtn.addEventListener("click", handleTalk.bind(this), {
       once: true,
     });
 

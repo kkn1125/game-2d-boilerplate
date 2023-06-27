@@ -1,15 +1,18 @@
+$chatting-float-size: calc(20px + 8vh);
+
 html,
 body,
 #app {
   margin: 0;
   height: 100%;
   overflow: hidden;
+  background-color: rgb(48, 48, 48);
 }
 
 .chat-modal {
   &.modal {
     position: fixed;
-    bottom: 50px;
+    bottom: $chatting-float-size;
     left: 50%;
     width: 90%;
     transform: translateX(-50%);
@@ -32,16 +35,56 @@ body,
     text-transform: uppercase;
     &::before {
       content: "[NPC]";
+      margin-right: 1rem;
+      color: #5441ff;
     }
+    color: #6d6d6d;
+    margin-bottom: 2rem;
   }
-  &.content {
-    font-size: 1.5rem;
-    font-weight: 200;
-    min-height: 100px;
-    max-height: 150px;
-    overflow: auto;
-    &::after {
-      content: ".";
+  &.content-wrap {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    .profile {
+      outline: none;
+      border: none;
+      width: 150px;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+    }
+    .content {
+      flex: 1;
+      font-size: 1.5rem;
+      font-weight: 200;
+      min-height: 150px;
+      max-height: 200px;
+      overflow: auto;
+      &::after {
+        @keyframes blink {
+          0% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 1;
+          }
+          51% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 0;
+          }
+        }
+        
+        content: "";
+        display: inline-block;
+        width: 10px;
+        height: 1em;
+        margin-left: 0.3rem;
+        background-color: #56565656;
+        animation: blink 1s linear both infinite;
+        -webkit-animation: blink 1s linear both infinite;
+      }
     }
   }
 
@@ -53,7 +96,7 @@ body,
     .exit-btn,
     .next-btn {
       cursor: pointer;
-      
+
       color: #ffffff;
       outline: none;
 

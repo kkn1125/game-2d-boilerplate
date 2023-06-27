@@ -1,5 +1,6 @@
 import list from "../map/list";
 import {
+  CAMERA,
   COLOR,
   ctx,
   FIELD_VALUE,
@@ -34,8 +35,8 @@ export default class GameMap {
 
   collision() {
     if (!master.me) return;
-    const unitSize = SIZE.UNIT * SIZE.SCALE;
-    const blockSize = SIZE.BLOCK * SIZE.SCALE;
+    const unitSize = SIZE.UNIT() * SIZE.SCALE();
+    const blockSize = SIZE.BLOCK() * SIZE.SCALE();
 
     const binary = this.binary;
     const cellCount = Math.min(binary[0].length, binary.length);
@@ -61,16 +62,16 @@ export default class GameMap {
     const nockbackSpeed = master.velocity * 2;
 
     /* center */
-    const topCenterBlock = binary[indexT][indexCenterX];
-    const bottomCenterBlock = binary[indexB][indexCenterX];
-    const leftCenterBlock = binary[indexCenterY][indexL];
-    const rightCenterBlock = binary[indexCenterY][indexR];
+    const topCenterBlock = binary?.[indexT]?.[indexCenterX];
+    const bottomCenterBlock = binary?.[indexB]?.[indexCenterX];
+    const leftCenterBlock = binary?.[indexCenterY]?.[indexL];
+    const rightCenterBlock = binary?.[indexCenterY]?.[indexR];
 
     /* top */
-    const topLeftBlock = binary[indexT][indexL];
-    const topRightBlock = binary[indexT][indexR];
-    const bottomLeftBlock = binary[indexB][indexL];
-    const bottomRightBlock = binary[indexB][indexR];
+    const topLeftBlock = binary?.[indexT]?.[indexL];
+    const topRightBlock = binary?.[indexT]?.[indexR];
+    const bottomLeftBlock = binary?.[indexB]?.[indexL];
+    const bottomRightBlock = binary?.[indexB]?.[indexR];
 
     // console.log(
     //   "center",
@@ -103,46 +104,76 @@ export default class GameMap {
     // console.log("=========================================");
 
     if (
-      binary[indexT][indexL] === FIELD_VALUE["block"] ||
-      binary[indexT][indexR] === FIELD_VALUE["block"] ||
-      (topCenterBlock === FIELD_VALUE["block"] &&
-        (topLeftBlock === FIELD_VALUE["block"] ||
-          topRightBlock === FIELD_VALUE["block"]))
+      topCenterBlock === undefined ||
+      bottomCenterBlock === undefined ||
+      leftCenterBlock === undefined ||
+      rightCenterBlock === undefined ||
+      topLeftBlock === undefined ||
+      topRightBlock === undefined ||
+      bottomLeftBlock === undefined ||
+      bottomRightBlock === undefined
     ) {
-      // console.log("상 충돌");
-      master.me.y += nockbackSpeed;
-    }
-    if (
-      binary[indexCenterY][indexL] === FIELD_VALUE["block"] &&
-      (binary[indexT][indexL] === FIELD_VALUE["block"] ||
-        binary[indexB][indexL] === FIELD_VALUE["block"] ||
-        (leftCenterBlock === FIELD_VALUE["block"] &&
+      // console.log("out");
+      if (topCenterBlock === undefined) {
+        // console.log("top out");
+        master.me.y += nockbackSpeed;
+      } else if (
+        rightCenterBlock === undefined &&
+        topRightBlock === undefined
+      ) {
+        // console.log("right out");
+        master.me.x -= nockbackSpeed;
+      } else if (leftCenterBlock === undefined && topLeftBlock === undefined) {
+        // console.log("left out");
+        master.me.x += nockbackSpeed;
+      } else if (bottomCenterBlock === undefined) {
+        // console.log("bottom out");
+        master.me.y -= nockbackSpeed;
+      }
+      return;
+    } else {
+      if (
+        binary[indexT][indexL] === FIELD_VALUE["block"] ||
+        binary[indexT][indexR] === FIELD_VALUE["block"] ||
+        (topCenterBlock === FIELD_VALUE["block"] &&
           (topLeftBlock === FIELD_VALUE["block"] ||
-            bottomLeftBlock === FIELD_VALUE["block"])))
-    ) {
-      // console.log("좌 충돌");
-      master.me.x += nockbackSpeed;
-    }
-    if (
-      binary[indexCenterY][indexR] === FIELD_VALUE["block"] &&
-      (binary[indexT][indexR] === FIELD_VALUE["block"] ||
+            topRightBlock === FIELD_VALUE["block"]))
+      ) {
+        // console.log("상 충돌");
+        master.me.y += nockbackSpeed;
+      }
+      if (
+        binary[indexCenterY][indexL] === FIELD_VALUE["block"] &&
+        (binary[indexT][indexL] === FIELD_VALUE["block"] ||
+          binary[indexB][indexL] === FIELD_VALUE["block"] ||
+          (leftCenterBlock === FIELD_VALUE["block"] &&
+            (topLeftBlock === FIELD_VALUE["block"] ||
+              bottomLeftBlock === FIELD_VALUE["block"])))
+      ) {
+        // console.log("좌 충돌");
+        master.me.x += nockbackSpeed;
+      }
+      if (
+        binary[indexCenterY][indexR] === FIELD_VALUE["block"] &&
+        (binary[indexT][indexR] === FIELD_VALUE["block"] ||
+          binary[indexB][indexR] === FIELD_VALUE["block"] ||
+          (rightCenterBlock === FIELD_VALUE["block"] &&
+            (topRightBlock === FIELD_VALUE["block"] ||
+              bottomRightBlock === FIELD_VALUE["block"])))
+      ) {
+        // console.log("우 충돌");
+        master.me.x -= nockbackSpeed;
+      }
+      if (
+        binary[indexB][indexL] === FIELD_VALUE["block"] ||
         binary[indexB][indexR] === FIELD_VALUE["block"] ||
-        (rightCenterBlock === FIELD_VALUE["block"] &&
-          (topRightBlock === FIELD_VALUE["block"] ||
-            bottomRightBlock === FIELD_VALUE["block"])))
-    ) {
-      // console.log("우 충돌");
-      master.me.x -= nockbackSpeed;
-    }
-    if (
-      binary[indexB][indexL] === FIELD_VALUE["block"] ||
-      binary[indexB][indexR] === FIELD_VALUE["block"] ||
-      (bottomCenterBlock === FIELD_VALUE["block"] &&
-        (bottomLeftBlock === FIELD_VALUE["block"] ||
-          bottomRightBlock === FIELD_VALUE["block"]))
-    ) {
-      // console.log("하 충돌");
-      master.me.y -= nockbackSpeed;
+        (bottomCenterBlock === FIELD_VALUE["block"] &&
+          (bottomLeftBlock === FIELD_VALUE["block"] ||
+            bottomRightBlock === FIELD_VALUE["block"]))
+      ) {
+        // console.log("하 충돌");
+        master.me.y -= nockbackSpeed;
+      }
     }
   }
 
@@ -150,14 +181,12 @@ export default class GameMap {
     const playerViewX =
       -(master.me?.x || 0) +
       innerWidth / 2 -
-      (SIZE.UNIT * SIZE.SCALE) / 2; /* innerWidth / 2; */
+      (SIZE.UNIT() * SIZE.SCALE()) / 2; /* innerWidth / 2; */
     const playerViewY =
-      -(master.me?.y || 0) +
-      innerHeight / 2 +
-      (SIZE.UNIT * SIZE.SCALE) / 2; /* innerHeight / 2; */
-    const size = SIZE.BLOCK * SIZE.SCALE;
+      -(master.me?.y || 0) + +CAMERA.Y(); /* innerHeight / 2; */
+    const size = SIZE.BLOCK() * SIZE.SCALE();
     const binary = this.binary;
-
+    console.log(CAMERA.X());
     for (let ri = 0; ri < binary.length / 2; ri++) {
       const rowMirror = binary.length - ri - 1;
       const row = ri;

@@ -1,4 +1,4 @@
-import { COLOR, ctx, JOYSTICK, master, SIZE } from "../util/global";
+import { CAMERA, COLOR, ctx, JOYSTICK, master, SIZE } from "../util/global";
 
 export default class Unit {
   static id: number = 0;
@@ -28,8 +28,8 @@ export default class Unit {
   }
 
   setPosition(x: number, y: number) {
-    this.x = x * SIZE.BLOCK * SIZE.SCALE;
-    this.y = y * SIZE.BLOCK * SIZE.SCALE;
+    this.x = x * SIZE.BLOCK() * SIZE.SCALE();
+    this.y = y * SIZE.BLOCK() * SIZE.SCALE();
   }
 
   setColor(color: COLOR) {
@@ -58,21 +58,21 @@ export default class Unit {
   }
 
   render() {
-    const x = innerWidth / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
-    const y = innerHeight / 2 + (SIZE.UNIT * SIZE.SCALE) / 2;
+    const x = CAMERA.X();
+    const y = CAMERA.Y();
 
     this.move();
     ctx.fillStyle = COLOR.NAME;
     ctx.textAlign = "center";
-    ctx.font = "Bold 1rem sans-serif";
+    ctx.font = `bold ${16 * SIZE.SCALE() * 0.1}px sans-serif`;
     ctx.fillText(
       this.name,
       master.me?.id === this.id
-        ? x + (SIZE.UNIT * SIZE.SCALE) / 2
-        : x + this.x - (master.me?.x || 0) + (SIZE.UNIT * SIZE.SCALE) / 2,
+        ? x + (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : x + this.x - (master.me?.x || 0) + (SIZE.UNIT() * SIZE.SCALE()) / 2,
       master.me?.id === this.id
-        ? y - (SIZE.UNIT * SIZE.SCALE) / 2
-        : y + this.y - (master.me?.y || 0) - (SIZE.UNIT * SIZE.SCALE) / 2
+        ? y - (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : y + this.y - (master.me?.y || 0) - (SIZE.UNIT() * SIZE.SCALE()) / 2
     );
     ctx.fillStyle = this.color;
     ctx.fillRect(
@@ -82,8 +82,8 @@ export default class Unit {
       master.me?.id === this.id ? y : y + this.y - (master.me?.y || 0),
       // 0,
       // 0,
-      SIZE.UNIT * SIZE.SCALE,
-      SIZE.UNIT * SIZE.SCALE
+      SIZE.UNIT() * SIZE.SCALE(),
+      SIZE.UNIT() * SIZE.SCALE()
     );
   }
 }

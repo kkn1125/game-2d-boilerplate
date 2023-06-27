@@ -1,4 +1,4 @@
-import { COLOR, ctx, master, SIZE } from "../util/global";
+import { CAMERA, COLOR, ctx, master, SIZE } from "../util/global";
 import ChatQueue from "./ChatQueue";
 import UI from "./UI";
 import Unit from "./Unit";
@@ -52,16 +52,19 @@ export default class NPC extends Unit {
   }
 
   talkExit() {
+    UI.clearChatModals();
     this.chatQueue.stop();
     if (master.me) master.me.velocity = master.velocity;
   }
 
   detectNearByPlayer() {
     master.units.forEach((player) => {
-      const leftSide = this.x - SIZE.UNIT * SIZE.SCALE * 2;
-      const rightSide = this.x + SIZE.UNIT * SIZE.SCALE * 2;
-      const topSide = this.y - SIZE.UNIT * SIZE.SCALE * 2;
-      const bottomSide = this.y + SIZE.UNIT * SIZE.SCALE * 2;
+      const unit = SIZE.UNIT();
+      const scale = SIZE.SCALE();
+      const leftSide = this.x - unit * scale * 2;
+      const rightSide = this.x + unit * scale * 2;
+      const topSide = this.y - unit * scale * 2;
+      const bottomSide = this.y + unit * scale * 2;
       if (
         leftSide < player.x &&
         player.x < rightSide &&
@@ -78,31 +81,35 @@ export default class NPC extends Unit {
   }
 
   render(): void {
-    const x = innerWidth / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
-    const y = innerHeight / 2 + (SIZE.UNIT * SIZE.SCALE) / 2;
+    const x = CAMERA.X();
+    const y = CAMERA.Y();
 
     super.render();
 
     if (this.hello) {
       const size = this.startBound;
 
-      ctx.font = `bold 36px sans-serif`;
+      ctx.font = `bold ${36 * SIZE.SCALE() * 0.1}px sans-serif`;
       ctx.fillStyle = COLOR.WARN;
       ctx.fillText(
         "?",
-        x + this.x - (master.me?.x || 0) + (SIZE.UNIT * SIZE.SCALE) / 2,
-        size + y + this.y - (master.me?.y || 0) - SIZE.UNIT * SIZE.SCALE - 10,
-        2 * SIZE.SCALE
+        x + this.x - (master.me?.x || 0) + (SIZE.UNIT() * SIZE.SCALE()) / 2,
+        -(SIZE.SCALE() * 2.5) +
+          size +
+          y +
+          this.y -
+          (master.me?.y || 0) -
+          (SIZE.UNIT() * SIZE.SCALE()) / 2
       );
       if (this.flag === "up") {
         if (this.startBound < this.bound) {
-          this.startBound += 0.5;
+          this.startBound += 0.035 * SIZE.SCALE();
         } else {
           this.flag = "down";
         }
       } else if (this.flag === "down") {
         if (this.startBound > 0) {
-          this.startBound -= 0.5;
+          this.startBound -= 0.035 * SIZE.SCALE();
         } else {
           this.flag = "up";
         }

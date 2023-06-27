@@ -1,6 +1,6 @@
 import NPC from "../model/NPC";
 import UI from "../model/UI";
-import { canvas, JOYSTICK, master, UNIT } from "../util/global";
+import { canvas, CONTROL, JOYSTICK, master, SIZE, UNIT } from "../util/global";
 import RayPointer from "./RayPointer";
 
 export default class EventListener {
@@ -34,9 +34,26 @@ export default class EventListener {
         if (npc.nearBy && npc.chatQueue.temp.length === 0) {
           npc.talk();
           if (master.me) master.me.velocity = 0;
+        } else if (npc.nearBy && npc.chatQueue.temp.length > 0) {
+          npc.talk();
         }
       });
     }
+    if ((key as OtherKeySet) === "Escape") {
+      UNIT.NPC.forEach((npc) => {
+        if (npc.nearBy && npc.chatQueue.temp.length > 0) {
+          npc.talkExit();
+        }
+      });
+    }
+    // if ((key as OtherKeySet) === "+") {
+    //   if (CONTROL.test + 1 > 20) return;
+    //   CONTROL.test += 1;
+    // }
+    // if ((key as OtherKeySet) === "-") {
+    //   if (CONTROL.test - 1 < 1) return;
+    //   CONTROL.test -= 1;
+    // }
     if (JOYSTICK.hasOwnProperty(key) && !UI.isOpenModal()) {
       JOYSTICK[key] = true;
       if (master.me) {
