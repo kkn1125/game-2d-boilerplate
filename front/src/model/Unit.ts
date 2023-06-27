@@ -1,4 +1,12 @@
-import { CAMERA, COLOR, ctx, JOYSTICK, master, SIZE } from "../util/global";
+import {
+  CAMERA,
+  COLOR,
+  CONTROL,
+  ctx,
+  JOYSTICK,
+  master,
+  SIZE,
+} from "../util/global";
 
 export default class Unit {
   static id: number = 0;
@@ -61,6 +69,9 @@ export default class Unit {
     const x = CAMERA.X();
     const y = CAMERA.Y();
 
+    const responsivePositionX= x + this.x * CONTROL.SCALE - (master.me?.x || 0) * CONTROL.SCALE
+    const responsivePositionY= y + this.y * CONTROL.SCALE - (master.me?.y || 0) * CONTROL.SCALE
+
     this.move();
     ctx.fillStyle = COLOR.NAME;
     ctx.textAlign = "center";
@@ -69,17 +80,23 @@ export default class Unit {
       this.name,
       master.me?.id === this.id
         ? x + (SIZE.UNIT() * SIZE.SCALE()) / 2
-        : x + this.x - (master.me?.x || 0) + (SIZE.UNIT() * SIZE.SCALE()) / 2,
+        : responsivePositionX +
+            (SIZE.UNIT() * SIZE.SCALE()) / 2,
       master.me?.id === this.id
         ? y - (SIZE.UNIT() * SIZE.SCALE()) / 2
-        : y + this.y - (master.me?.y || 0) - (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : responsivePositionY -
+            (SIZE.UNIT() * SIZE.SCALE()) / 2
     );
     ctx.fillStyle = this.color;
     ctx.fillRect(
       // this.x,
       // this.y,
-      master.me?.id === this.id ? x : x + this.x - (master.me?.x || 0),
-      master.me?.id === this.id ? y : y + this.y - (master.me?.y || 0),
+      master.me?.id === this.id
+        ? x
+        : responsivePositionX,
+      master.me?.id === this.id
+        ? y
+        : responsivePositionY,
       // 0,
       // 0,
       SIZE.UNIT() * SIZE.SCALE(),

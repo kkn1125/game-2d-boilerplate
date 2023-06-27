@@ -12,13 +12,16 @@ const npc1 = new NPC("Devian");
 npc1.setPosition(24, 5);
 // npc1.addAutoMessage("hi");
 // npc1.addAutoMessage("my name is kimson");
-npc1.addStaticMessage("hi");
-npc1.addStaticMessage("my name is kimson");
+npc1.addStaticMessage(
+  `안녕? 나는 ${npc1.name}이야! 지금은 NPC가 나 혼자뿐이지만 많은 친구들이 추가될거야!`
+);
+npc1.addStaticMessage("곧 거대한 2D 게임엔진이 되겠지?");
 
 const testUser = new User("test");
 master.me = testUser;
 
 const engine = new Engine();
+engine.activeGuideLine = true;
 engine.initUI(ui);
 engine.initRayPointer(rayPointer);
 engine.addNpc(npc1);

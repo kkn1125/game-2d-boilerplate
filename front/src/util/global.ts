@@ -1,4 +1,7 @@
 import DEFAULT_NPC_IMG from "/images/default_npc.png";
+import GRASS from "/images/grass.png";
+import ROAD from "/images/road.png";
+
 import NPC from "../model/NPC";
 import Unit from "../model/Unit";
 import User from "../model/User";
@@ -14,16 +17,19 @@ export enum COLOR {
 }
 
 export const CONTROL = {
-  BLOCK: 5,
-  UNIT: 3,
-  SCALE: 10,
-  // test: 1,
+  BLOCK: 1,
+  UNIT: 1,
+  SCALE: 1,
+  MAX_ZOOM: 2,
+  MIN_ZOOM: 1,
 };
 
+// window.CONTROL = CONTROL;
+
 export const SIZE = {
-  BLOCK: () => CONTROL.BLOCK,
-  UNIT: () => CONTROL.UNIT,
-  SCALE: () => CONTROL.SCALE,
+  BLOCK: () => 5,
+  UNIT: () => 3,
+  SCALE: () => 10 * CONTROL.SCALE,
 };
 export const CAMERA = {
   X: () => innerWidth / 2 - (SIZE.UNIT() * SIZE.SCALE()) / 2,
@@ -66,5 +72,16 @@ export enum FIELD_VALUE {
   wall = 6,
   dummy = 7,
 }
+
+const createImage = (url: string) => {
+  const img = new Image();
+  img.src = url;
+  return img;
+};
+
+export const TEXTURE = {
+  [Number(FIELD_VALUE["grass"])]: createImage(GRASS),
+  [Number(FIELD_VALUE["road"])]: createImage(ROAD),
+};
 
 export { DEFAULT_NPC_IMG };

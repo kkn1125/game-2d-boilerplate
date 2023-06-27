@@ -46,14 +46,14 @@ export default class EventListener {
         }
       });
     }
-    // if ((key as OtherKeySet) === "+") {
-    //   if (CONTROL.test + 1 > 20) return;
-    //   CONTROL.test += 1;
-    // }
-    // if ((key as OtherKeySet) === "-") {
-    //   if (CONTROL.test - 1 < 1) return;
-    //   CONTROL.test -= 1;
-    // }
+    if ((key as OtherKeySet) === "+") {
+      if (CONTROL.SCALE + 1 > CONTROL.MAX_ZOOM) return;
+      CONTROL.SCALE += 1;
+    }
+    if ((key as OtherKeySet) === "-") {
+      if (CONTROL.SCALE - 1 < CONTROL.MIN_ZOOM) return;
+      CONTROL.SCALE -= 1;
+    }
     if (JOYSTICK.hasOwnProperty(key) && !UI.isOpenModal()) {
       JOYSTICK[key] = true;
       if (master.me) {

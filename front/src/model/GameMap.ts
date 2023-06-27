@@ -2,11 +2,12 @@ import list from "../map/list";
 import {
   CAMERA,
   COLOR,
+  CONTROL,
   ctx,
   FIELD_VALUE,
-  JOYSTICK,
   master,
   SIZE,
+  TEXTURE,
 } from "../util/global";
 
 export default class GameMap {
@@ -42,12 +43,12 @@ export default class GameMap {
     const cellCount = Math.min(binary[0].length, binary.length);
     const dist = cellCount * blockSize;
 
-    const xin = master.me.x;
-    const xout = master.me.x + unitSize;
-    const yin = master.me.y;
-    const yout = master.me.y + unitSize;
-    const xcen = master.me.x + unitSize / 2;
-    const ycen = master.me.y + unitSize / 2;
+    const xin = master.me.x * CONTROL.SCALE;
+    const xout = xin + unitSize;
+    const yin = master.me.y * CONTROL.SCALE;
+    const yout = yin + unitSize;
+    const xcen = xin + unitSize / 2;
+    const ycen = yin + unitSize / 2;
 
     const indexCenterX = Math.floor(xcen / blockSize);
     const indexCenterY = Math.floor(ycen / blockSize);
@@ -73,36 +74,7 @@ export default class GameMap {
     const bottomLeftBlock = binary?.[indexB]?.[indexL];
     const bottomRightBlock = binary?.[indexB]?.[indexR];
 
-    // console.log(
-    //   "center",
-    //   "t:",
-    //   topCenterBlock ? "길" : "벽",
-    //   "b:",
-    //   bottomCenterBlock ? "길" : "벽"
-    // );
-    // console.log(
-    //   "center",
-    //   "l:",
-    //   leftCenterBlock ? "길" : "벽",
-    //   "r:",
-    //   rightCenterBlock ? "길" : "벽"
-    // );
-    // console.log(
-    //   "top",
-    //   "l:",
-    //   topLeftBlock ? "길" : "벽",
-    //   "r:",
-    //   topRightBlock ? "길" : "벽"
-    // );
-    // console.log(
-    //   "bottom",
-    //   "l:",
-    //   bottomLeftBlock ? "길" : "벽",
-    //   "r:",
-    //   bottomRightBlock ? "길" : "벽"
-    // );
-    // console.log("=========================================");
-
+    /* Map 외부 감지 */
     if (
       topCenterBlock === undefined ||
       bottomCenterBlock === undefined ||
@@ -132,6 +104,7 @@ export default class GameMap {
       }
       return;
     } else {
+      /* Map 내부 오브젝트에 대한 감지 */
       if (
         binary[indexT][indexL] === FIELD_VALUE["block"] ||
         binary[indexT][indexR] === FIELD_VALUE["block"] ||
@@ -178,15 +151,15 @@ export default class GameMap {
   }
 
   drawMap() {
+    const unitSize = SIZE.UNIT() * SIZE.SCALE();
+    const blockSize = SIZE.BLOCK() * SIZE.SCALE();
     const playerViewX =
-      -(master.me?.x || 0) +
-      innerWidth / 2 -
-      (SIZE.UNIT() * SIZE.SCALE()) / 2; /* innerWidth / 2; */
+      -(master.me?.x || 0) * CONTROL.SCALE + CAMERA.X(); /* innerWidth / 2; */
     const playerViewY =
-      -(master.me?.y || 0) + +CAMERA.Y(); /* innerHeight / 2; */
-    const size = SIZE.BLOCK() * SIZE.SCALE();
+      -(master.me?.y || 0) * CONTROL.SCALE + CAMERA.Y(); /* innerHeight / 2; */
+
     const binary = this.binary;
-    console.log(CAMERA.X());
+
     for (let ri = 0; ri < binary.length / 2; ri++) {
       const rowMirror = binary.length - ri - 1;
       const row = ri;
@@ -205,10 +178,22 @@ export default class GameMap {
         if (bColumn === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
-            column * size + playerViewX,
-            row * size + playerViewY,
-            size,
-            size
+            column * blockSize + playerViewX,
+            row * blockSize + playerViewY,
+            blockSize,
+            blockSize
+          );
+
+          ctx.drawImage(
+            TEXTURE[FIELD_VALUE["grass"]],
+            0,
+            0,
+            blockSize,
+            blockSize,
+            column * blockSize + playerViewX,
+            row * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
 
@@ -216,33 +201,59 @@ export default class GameMap {
         if (bColumnMirror === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
-            columnMirror * size + playerViewX,
-            row * size + playerViewY,
-            size,
-            size
+            columnMirror * blockSize + playerViewX,
+            row * blockSize + playerViewY,
+            blockSize,
+            blockSize
+          );
+
+          ctx.drawImage(
+            TEXTURE[FIELD_VALUE["grass"]],
+            0,
+            0,
+            blockSize,
+            blockSize,
+            columnMirror * blockSize + playerViewX,
+            row * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
 
         /* Roads */
         /* half column top-left */
         if (bColumn === FIELD_VALUE["road"]) {
-          ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(
-            column * size + playerViewX,
-            row * size + playerViewY,
-            size,
-            size
+          // ctx.fillStyle = COLOR.ROAD;
+          // ctx.fillRect(
+          //   column * blockSize + playerViewX,
+          //   row * blockSize + playerViewY,
+          //   blockSize,
+          //   blockSize
+          // );
+          ctx.drawImage(
+            TEXTURE[bColumn],
+            column * blockSize + playerViewX,
+            row * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
 
         /* half column top-right */
         if (bColumnMirror === FIELD_VALUE["road"]) {
-          ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(
-            columnMirror * size + playerViewX,
-            row * size + playerViewY,
-            size,
-            size
+          // ctx.fillStyle = COLOR.ROAD;
+          // ctx.fillRect(
+          //   columnMirror * blockSize + playerViewX,
+          //   row * blockSize + playerViewY,
+          //   blockSize,
+          //   blockSize
+          // );
+          ctx.drawImage(
+            TEXTURE[bColumnMirror],
+            columnMirror * blockSize + playerViewX,
+            row * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
       }
@@ -259,10 +270,22 @@ export default class GameMap {
         if (bColumn === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
-            column * size + playerViewX,
-            rowMirror * size + playerViewY,
-            size,
-            size
+            column * blockSize + playerViewX,
+            rowMirror * blockSize + playerViewY,
+            blockSize,
+            blockSize
+          );
+
+          ctx.drawImage(
+            TEXTURE[FIELD_VALUE["grass"]],
+            0,
+            0,
+            blockSize,
+            blockSize,
+            column * blockSize + playerViewX,
+            rowMirror * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
 
@@ -270,33 +293,59 @@ export default class GameMap {
         if (bColumnMirror === FIELD_VALUE["block"]) {
           ctx.fillStyle = COLOR.BLOCK;
           ctx.fillRect(
-            columnMirror * size + playerViewX,
-            rowMirror * size + playerViewY,
-            size,
-            size
+            columnMirror * blockSize + playerViewX,
+            rowMirror * blockSize + playerViewY,
+            blockSize,
+            blockSize
+          );
+
+          ctx.drawImage(
+            TEXTURE[FIELD_VALUE["grass"]],
+            0,
+            0,
+            blockSize,
+            blockSize,
+            columnMirror * blockSize + playerViewX,
+            rowMirror * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
 
         /* Roads */
         /* half column bottom-left */
         if (bColumn === FIELD_VALUE["road"]) {
-          ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(
-            column * size + playerViewX,
-            rowMirror * size + playerViewY,
-            size,
-            size
+          // ctx.fillStyle = COLOR.ROAD;
+          // ctx.fillRect(
+          //   column * blockSize + playerViewX,
+          //   rowMirror * blockSize + playerViewY,
+          //   blockSize,
+          //   blockSize
+          // );
+          ctx.drawImage(
+            TEXTURE[bColumn],
+            column * blockSize + playerViewX,
+            rowMirror * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
 
         /* half column bottom-right */
         if (bColumnMirror === FIELD_VALUE["road"]) {
-          ctx.fillStyle = COLOR.ROAD;
-          ctx.fillRect(
-            columnMirror * size + playerViewX,
-            rowMirror * size + playerViewY,
-            size,
-            size
+          // ctx.fillStyle = COLOR.ROAD;
+          // ctx.fillRect(
+          //   columnMirror * blockSize + playerViewX,
+          //   rowMirror * blockSize + playerViewY,
+          //   blockSize,
+          //   blockSize
+          // );
+          ctx.drawImage(
+            TEXTURE[bColumnMirror],
+            columnMirror * blockSize + playerViewX,
+            rowMirror * blockSize + playerViewY,
+            blockSize,
+            blockSize
           );
         }
       }

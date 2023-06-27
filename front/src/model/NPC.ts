@@ -1,4 +1,4 @@
-import { CAMERA, COLOR, ctx, master, SIZE } from "../util/global";
+import { CAMERA, COLOR, CONTROL, ctx, master, SIZE } from "../util/global";
 import ChatQueue from "./ChatQueue";
 import UI from "./UI";
 import Unit from "./Unit";
@@ -61,15 +61,19 @@ export default class NPC extends Unit {
     master.units.forEach((player) => {
       const unit = SIZE.UNIT();
       const scale = SIZE.SCALE();
-      const leftSide = this.x - unit * scale * 2;
-      const rightSide = this.x + unit * scale * 2;
-      const topSide = this.y - unit * scale * 2;
-      const bottomSide = this.y + unit * scale * 2;
+      const npcX = this.x * CONTROL.SCALE;
+      const npcY = this.y * CONTROL.SCALE;
+      const playerX = player.x * CONTROL.SCALE;
+      const playerY = player.y * CONTROL.SCALE;
+      const leftSide = npcX - unit * scale * 2;
+      const rightSide = npcX + unit * scale * 2;
+      const topSide = npcY - unit * scale * 2;
+      const bottomSide = npcY + unit * scale * 2;
       if (
-        leftSide < player.x &&
-        player.x < rightSide &&
-        topSide < player.y &&
-        player.y < bottomSide
+        leftSide < playerX &&
+        playerX < rightSide &&
+        topSide < playerY &&
+        playerY < bottomSide
       ) {
         this.nearBy = true;
         this.onHello();
@@ -88,18 +92,18 @@ export default class NPC extends Unit {
 
     if (this.hello) {
       const size = this.startBound;
+      const npcX = this.x * CONTROL.SCALE;
+      const npcY = this.y * CONTROL.SCALE;
+      const playerX = (master.me?.x || 0) * CONTROL.SCALE;
+      const playerY = (master.me?.y || 0) * CONTROL.SCALE;
+      const unitSize = (SIZE.UNIT() * SIZE.SCALE()) / 2;
 
       ctx.font = `bold ${36 * SIZE.SCALE() * 0.1}px sans-serif`;
       ctx.fillStyle = COLOR.WARN;
       ctx.fillText(
         "?",
-        x + this.x - (master.me?.x || 0) + (SIZE.UNIT() * SIZE.SCALE()) / 2,
-        -(SIZE.SCALE() * 2.5) +
-          size +
-          y +
-          this.y -
-          (master.me?.y || 0) -
-          (SIZE.UNIT() * SIZE.SCALE()) / 2
+        x + npcX - playerX + unitSize,
+        -(SIZE.SCALE() * 2.5) + size + y + npcY - playerY - unitSize
       );
       if (this.flag === "up") {
         if (this.startBound < this.bound) {

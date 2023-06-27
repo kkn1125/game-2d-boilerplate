@@ -11,6 +11,7 @@ export default class Engine {
   eventListener: EventListener;
   ui: UI;
   rayPointer: RayPointer;
+  activeGuideLine: boolean = false;
 
   constructor() {
     this.initListener();
@@ -67,16 +68,18 @@ export default class Engine {
     master.units.forEach((unit) => {
       unit.render();
     });
-    this.guideLine();
+    if (this.activeGuideLine) {
+      this.guideLine();
+    }
     requestAnimationFrame(this.render.bind(this));
   }
 
   guideLine() {
     /* vertical guide line */
-    ctx.fillStyle = COLOR.BLACK;
+    ctx.fillStyle = COLOR.BLACK + "56";
     ctx.fillRect(innerWidth / 2, 0, 1, innerHeight);
     /* horizontal guide line */
-    ctx.fillStyle = COLOR.BLACK;
+    ctx.fillStyle = COLOR.BLACK + "56";
     ctx.fillRect(0, innerHeight / 2, innerWidth, 1);
   }
 }
