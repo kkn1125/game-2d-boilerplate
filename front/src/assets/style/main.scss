@@ -28,6 +28,10 @@ body,
     -moz-border-radius: 0.3rem;
     -ms-border-radius: 0.3rem;
     -o-border-radius: 0.3rem;
+
+    @media (min-width: 0px) and (max-width: 376px) {
+      width: 80%;
+    }
   }
   &.title {
     font-weight: 700;
@@ -40,6 +44,10 @@ body,
     }
     color: #6d6d6d;
     margin-bottom: 2rem;
+
+    @media (min-width: 0px) and (max-width: 376px) {
+      font-size: 1.2rem;
+    }
   }
   &.content-wrap {
     display: flex;
@@ -52,6 +60,9 @@ body,
       background-repeat: no-repeat;
       background-size: contain;
       background-position: center;
+      @media (min-width: 0px) and (max-width: 376px) {
+        width: 80px;
+      }
     }
     .content {
       flex: 1;
@@ -75,7 +86,7 @@ body,
             opacity: 0;
           }
         }
-        
+
         content: "";
         display: inline-block;
         width: 10px;
@@ -84,6 +95,11 @@ body,
         background-color: #56565656;
         animation: blink 1s linear both infinite;
         -webkit-animation: blink 1s linear both infinite;
+      }
+      @media (min-width: 0px) and (max-width: 376px) {
+        font-size: 1rem;
+        min-height: 80px;
+        max-height: 120px;
       }
     }
   }

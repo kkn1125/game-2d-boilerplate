@@ -24,13 +24,13 @@ export default class RayPointer {
     const playerViewX =
       -(master.me?.x || 0) +
       centerX -
-      (SIZE.UNIT * SIZE.SCALE) / 2; /* innerWidth / 2; */
+      (SIZE.UNIT() * SIZE.SCALE()) / 2; /* innerWidth / 2; */
     const playerViewY =
       -(master.me?.y || 0) +
       centerY +
-      (SIZE.UNIT * SIZE.SCALE) / 2; /* innerHeight / 2; */
-    const blockSize = SIZE.BLOCK * SIZE.SCALE;
-    const unitSize = SIZE.UNIT * SIZE.SCALE;
+      (SIZE.UNIT() * SIZE.SCALE()) / 2; /* innerHeight / 2; */
+    const blockSize = SIZE.BLOCK() * SIZE.SCALE();
+    const unitSize = SIZE.UNIT() * SIZE.SCALE();
 
     /* 마우스 포인터 화면 및 맵 거리 기준 계산하여 NPC, Player 선택 때 사용 */
     const xPosition = x - playerViewX;

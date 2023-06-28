@@ -1,6 +1,11 @@
 import DEFAULT_NPC_IMG from "/images/default_npc.png";
 import GRASS from "/images/grass.png";
 import ROAD from "/images/road.png";
+import TREE from "/images/tree.png";
+import ROCK from "/images/rock.png";
+import ROCK2 from "/images/rock2.png";
+import WATER from "/images/water.png";
+import BUSH from "/images/bush.png";
 
 import NPC from "../model/NPC";
 import Unit from "../model/Unit";
@@ -72,7 +77,10 @@ export enum FIELD_VALUE {
   tree = 4,
   flower = 5,
   wall = 6,
-  dummy = 7,
+  bush = 7,
+  rock = 8,
+  rock2 = 9,
+  dummy = 10,
 }
 
 const createImage = (url: string) => {
@@ -84,6 +92,10 @@ const createImage = (url: string) => {
 export const TEXTURE = {
   [Number(FIELD_VALUE["grass"])]: createImage(GRASS),
   [Number(FIELD_VALUE["road"])]: createImage(ROAD),
+  [Number(FIELD_VALUE["rock"])]: createImage(ROCK),
+  [Number(FIELD_VALUE["rock2"])]: createImage(ROCK2),
+  [Number(FIELD_VALUE["water"])]: createImage(WATER),
+  [Number(FIELD_VALUE["bush"])]: createImage(BUSH),
 };
 
 export { DEFAULT_NPC_IMG };

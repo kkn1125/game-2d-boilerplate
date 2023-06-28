@@ -151,10 +151,145 @@ export default class GameMap {
     }
   }
 
-  miniMap(x: number, y: number, scale: number) {
-    this.drawMap({ x, y, scale });
+  drawMinimap(x: number, y: number, scale: number) {
+    this.minimap(x, y, scale);
     this.miniMapNPC(x, y, scale);
     this.miniMapPlayer(x, y, scale);
+  }
+
+  minimap(x: number, y: number, scale: number) {
+    const unitSize = SIZE.UNIT() * SIZE.SCALE() * scale;
+    const blockSize = SIZE.BLOCK() * SIZE.SCALE() * scale;
+    const playerViewX =
+      -(x !== undefined ? x : master.me?.x || 0) * CONTROL.SCALE * scale +
+      (x !== undefined ? 0 : CAMERA.X()); /* innerWidth / 2; */
+    const playerViewY =
+      -(y !== undefined ? y : master.me?.y || 0) * CONTROL.SCALE * scale +
+      (y !== undefined ? 0 : CAMERA.Y()); /* innerHeight / 2; */
+
+    const binary = this.binary;
+
+    if (x && y && scale) {
+      const padding = 2;
+      ctx.fillStyle = COLOR.WARN;
+      ctx.fillRect(
+        playerViewX - padding,
+        playerViewY - padding,
+        this.binary[0].length * blockSize + padding * 2,
+        this.binary.length * blockSize + padding * 2
+      );
+    }
+
+    const renderBlock = (x: number, y: number, field: number) => {
+      ctx.fillStyle = COLOR.BLOCK;
+      ctx.fillRect(
+        x * blockSize + playerViewX,
+        y * blockSize + playerViewY,
+        blockSize,
+        blockSize
+      );
+    };
+    const renderGrass = (x: number, y: number, field: number) => {
+      ctx.drawImage(
+        TEXTURE[FIELD_VALUE["grass"]],
+        0,
+        0,
+        blockSize*scale,
+        blockSize*scale,
+        x * blockSize + playerViewX,
+        y * blockSize + playerViewY,
+        blockSize,
+        blockSize
+      );
+    };
+
+    const renderRoad = (x: number, y: number, field: number) => {
+      // ctx.fillStyle = COLOR.ROAD;
+      // ctx.fillRect(
+      //   columnMirror * blockSize + playerViewX,
+      //   rowMirror * blockSize + playerViewY,
+      //   blockSize,
+      //   blockSize
+      // );
+      ctx.drawImage(
+        TEXTURE[field],
+        x * blockSize + playerViewX,
+        y * blockSize + playerViewY,
+        blockSize,
+        blockSize
+      );
+    };
+
+    for (let ri = 0; ri < binary.length / 2; ri++) {
+      const rowMirror = binary.length - ri - 1;
+      const row = ri;
+      const bRow = binary[row];
+      const bRowMirror = binary[rowMirror];
+
+      /* half map top 1/2 */
+      for (let ci = 0; ci < bRow.length / 2; ci++) {
+        const columnMirror = bRow.length - ci - 1;
+        const column = ci;
+        const bColumnMirror = bRow[columnMirror];
+        const bColumn = bRow[column];
+
+        /* Blocks */
+        /* half column top-left */
+        if (bColumn === FIELD_VALUE["block"]) {
+          renderBlock(column, row, bColumn);
+          renderGrass(column, row, bColumn);
+        }
+
+        /* half column top-right */
+        if (bColumnMirror === FIELD_VALUE["block"]) {
+          renderBlock(columnMirror, row, bColumnMirror);
+          renderGrass(columnMirror, row, bColumnMirror);
+        }
+
+        /* Roads */
+        /* half column top-left */
+        if (bColumn === FIELD_VALUE["road"]) {
+          renderRoad(column, row, bColumn);
+        }
+
+        /* half column top-right */
+        if (bColumnMirror === FIELD_VALUE["road"]) {
+          renderRoad(columnMirror, row, bColumnMirror);
+        }
+      }
+
+      /* half map bottom 2/2 */
+      for (let ci = 0; ci < bRowMirror.length / 2; ci++) {
+        const columnMirror = Math.floor(bRowMirror.length) - ci - 1;
+        const column = ci;
+        const bColumnMirror = bRowMirror[columnMirror];
+        const bColumn = bRowMirror[column];
+
+        /* Blocks */
+        /* half column bottom-left */
+        if (bColumn === FIELD_VALUE["block"]) {
+          renderBlock(column, rowMirror, bColumn);
+          renderGrass(column, rowMirror, bColumn);
+        }
+
+        /* half column bottom-right */
+        if (bColumnMirror === FIELD_VALUE["block"]) {
+          renderBlock(columnMirror, rowMirror, bColumnMirror);
+          renderGrass(columnMirror, rowMirror, bColumnMirror);
+        }
+
+        /* Roads */
+        /* half column bottom-left */
+        if (bColumn === FIELD_VALUE["road"]) {
+          renderRoad(column, rowMirror, bColumn);
+        }
+
+        /* half column bottom-right */
+        if (bColumnMirror === FIELD_VALUE["road"]) {
+          renderRoad(columnMirror, rowMirror, bColumnMirror);
+        }
+      }
+    }
   }
 
   miniMapPlayer(x: number, y: number, scale: number) {
@@ -197,38 +332,53 @@ export default class GameMap {
     });
   }
 
-  drawMap(
-    option: { x: number; y: number; scale: number } | undefined = undefined
-  ) {
-    const miniMapX = option?.x;
-    const miniMapY = option?.y;
-    const miniMapScale = option?.scale || 1;
-
-    const unitSize = SIZE.UNIT() * SIZE.SCALE() * miniMapScale;
-    const blockSize = SIZE.BLOCK() * SIZE.SCALE() * miniMapScale;
-    const playerViewX =
-      -(miniMapX !== undefined ? miniMapX : master.me?.x || 0) *
-        CONTROL.SCALE *
-        miniMapScale +
-      (miniMapX !== undefined ? 0 : CAMERA.X()); /* innerWidth / 2; */
-    const playerViewY =
-      -(miniMapY !== undefined ? miniMapY : master.me?.y || 0) *
-        CONTROL.SCALE *
-        miniMapScale +
-      (miniMapY !== undefined ? 0 : CAMERA.Y()); /* innerHeight / 2; */
+  drawMap() {
+    const unitSize = SIZE.UNIT() * SIZE.SCALE();
+    const blockSize = SIZE.BLOCK() * SIZE.SCALE();
+    const playerViewX = -(master.me?.x || 0) * CONTROL.SCALE + CAMERA.X();
+    const playerViewY = -(master.me?.y || 0) * CONTROL.SCALE + CAMERA.Y();
 
     const binary = this.binary;
 
-    if (miniMapX && miniMapY && miniMapScale) {
-      const padding = 2;
-      ctx.fillStyle = COLOR.WARN;
+    const renderBlock = (x: number, y: number, field: number) => {
+      ctx.fillStyle = COLOR.BLOCK;
       ctx.fillRect(
-        playerViewX - padding,
-        playerViewY - padding,
-        this.binary[0].length * blockSize + padding * 2,
-        this.binary.length * blockSize + padding * 2
+        x * blockSize + playerViewX,
+        y * blockSize + playerViewY,
+        blockSize,
+        blockSize
       );
-    }
+    };
+    const renderGrass = (x: number, y: number, field: number) => {
+      ctx.drawImage(
+        TEXTURE[FIELD_VALUE["grass"]],
+        0,
+        0,
+        blockSize,
+        blockSize,
+        x * blockSize + playerViewX,
+        y * blockSize + playerViewY,
+        blockSize,
+        blockSize
+      );
+    };
+
+    const renderRoad = (x: number, y: number, field: number) => {
+      // ctx.fillStyle = COLOR.ROAD;
+      // ctx.fillRect(
+      //   columnMirror * blockSize + playerViewX,
+      //   rowMirror * blockSize + playerViewY,
+      //   blockSize,
+      //   blockSize
+      // );
+      ctx.drawImage(
+        TEXTURE[field],
+        x * blockSize + playerViewX,
+        y * blockSize + playerViewY,
+        blockSize,
+        blockSize
+      );
+    };
 
     for (let ri = 0; ri < binary.length / 2; ri++) {
       const rowMirror = binary.length - ri - 1;
@@ -246,85 +396,25 @@ export default class GameMap {
         /* Blocks */
         /* half column top-left */
         if (bColumn === FIELD_VALUE["block"]) {
-          ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(
-            column * blockSize + playerViewX,
-            row * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
-
-          ctx.drawImage(
-            TEXTURE[FIELD_VALUE["grass"]],
-            0,
-            0,
-            blockSize,
-            blockSize,
-            column * blockSize + playerViewX,
-            row * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderBlock(column, row, bColumn);
+          renderGrass(column, row, bColumn);
         }
 
         /* half column top-right */
         if (bColumnMirror === FIELD_VALUE["block"]) {
-          ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(
-            columnMirror * blockSize + playerViewX,
-            row * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
-
-          ctx.drawImage(
-            TEXTURE[FIELD_VALUE["grass"]],
-            0,
-            0,
-            blockSize,
-            blockSize,
-            columnMirror * blockSize + playerViewX,
-            row * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderBlock(columnMirror, row, bColumnMirror);
+          renderGrass(columnMirror, row, bColumnMirror);
         }
 
         /* Roads */
         /* half column top-left */
         if (bColumn === FIELD_VALUE["road"]) {
-          // ctx.fillStyle = COLOR.ROAD;
-          // ctx.fillRect(
-          //   column * blockSize + playerViewX,
-          //   row * blockSize + playerViewY,
-          //   blockSize,
-          //   blockSize
-          // );
-          ctx.drawImage(
-            TEXTURE[bColumn],
-            column * blockSize + playerViewX,
-            row * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderRoad(column, row, bColumn);
         }
 
         /* half column top-right */
         if (bColumnMirror === FIELD_VALUE["road"]) {
-          // ctx.fillStyle = COLOR.ROAD;
-          // ctx.fillRect(
-          //   columnMirror * blockSize + playerViewX,
-          //   row * blockSize + playerViewY,
-          //   blockSize,
-          //   blockSize
-          // );
-          ctx.drawImage(
-            TEXTURE[bColumnMirror],
-            columnMirror * blockSize + playerViewX,
-            row * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderRoad(columnMirror, row, bColumnMirror);
         }
       }
 
@@ -338,85 +428,25 @@ export default class GameMap {
         /* Blocks */
         /* half column bottom-left */
         if (bColumn === FIELD_VALUE["block"]) {
-          ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(
-            column * blockSize + playerViewX,
-            rowMirror * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
-
-          ctx.drawImage(
-            TEXTURE[FIELD_VALUE["grass"]],
-            0,
-            0,
-            blockSize,
-            blockSize,
-            column * blockSize + playerViewX,
-            rowMirror * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderBlock(column, rowMirror, bColumn);
+          renderGrass(column, rowMirror, bColumn);
         }
 
         /* half column bottom-right */
         if (bColumnMirror === FIELD_VALUE["block"]) {
-          ctx.fillStyle = COLOR.BLOCK;
-          ctx.fillRect(
-            columnMirror * blockSize + playerViewX,
-            rowMirror * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
-
-          ctx.drawImage(
-            TEXTURE[FIELD_VALUE["grass"]],
-            0,
-            0,
-            blockSize,
-            blockSize,
-            columnMirror * blockSize + playerViewX,
-            rowMirror * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderBlock(columnMirror, rowMirror, bColumnMirror);
+          renderGrass(columnMirror, rowMirror, bColumnMirror);
         }
 
         /* Roads */
         /* half column bottom-left */
         if (bColumn === FIELD_VALUE["road"]) {
-          // ctx.fillStyle = COLOR.ROAD;
-          // ctx.fillRect(
-          //   column * blockSize + playerViewX,
-          //   rowMirror * blockSize + playerViewY,
-          //   blockSize,
-          //   blockSize
-          // );
-          ctx.drawImage(
-            TEXTURE[bColumn],
-            column * blockSize + playerViewX,
-            rowMirror * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderRoad(column, rowMirror, bColumn);
         }
 
         /* half column bottom-right */
         if (bColumnMirror === FIELD_VALUE["road"]) {
-          // ctx.fillStyle = COLOR.ROAD;
-          // ctx.fillRect(
-          //   columnMirror * blockSize + playerViewX,
-          //   rowMirror * blockSize + playerViewY,
-          //   blockSize,
-          //   blockSize
-          // );
-          ctx.drawImage(
-            TEXTURE[bColumnMirror],
-            columnMirror * blockSize + playerViewX,
-            rowMirror * blockSize + playerViewY,
-            blockSize,
-            blockSize
-          );
+          renderRoad(columnMirror, rowMirror, bColumnMirror);
         }
       }
     }
