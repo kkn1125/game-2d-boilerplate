@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "rm -rf dist/ && vite build",
     "deploy": "cd dist/ && touch .nojekyll && git init && git add -A && git commit -m \"gh-pages\" && git push https://github.com/kkn1125/game-2d-boilerplate.git master:gh-pages -f"
   },
   "keywords": [],
