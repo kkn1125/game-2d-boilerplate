@@ -10,6 +10,7 @@ import BUSH from "/images/bush.png";
 import NPC from "../model/NPC";
 import Unit from "../model/Unit";
 import User from "../model/User";
+import Building from "../model/Building";
 
 export enum COLOR {
   WARN = "#ff0000", // warn
@@ -19,8 +20,11 @@ export enum COLOR {
   UNIT = "#ffff00", // unit
   NPC = "#bc0fab", // unit
   NAME = "#222222", // unit
+  BUILDING_NAME = "#ffffff", // unit
+  BUILDING = "#45fcab", // unit
   DEVIAN = "#0ff0ff", // unit
   MOMO = "#9a2fa0", // unit
+  KIMSON = "#ff0000", // unit
 }
 
 export const CONTROL = {
@@ -61,6 +65,7 @@ export const JOYSTICK = {
 export const players = new Map<number, User>();
 export const UNIT = {
   NPC: new Map<number, NPC>(),
+  BUILDING: new Map<number, Building>(),
 };
 
 export const APP = () => document.getElementById("app") as HTMLDivElement;
@@ -96,6 +101,9 @@ export const TEXTURE = {
   [Number(FIELD_VALUE["rock2"])]: createImage(ROCK2),
   [Number(FIELD_VALUE["water"])]: createImage(WATER),
   [Number(FIELD_VALUE["bush"])]: createImage(BUSH),
+  [Number(FIELD_VALUE["tree"])]: createImage(TREE),
 };
 
 export { DEFAULT_NPC_IMG };
+
+export const MAP_PADDING = 6;

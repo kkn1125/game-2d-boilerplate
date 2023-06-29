@@ -1,3 +1,4 @@
+import Building from "../model/Building";
 import GameMap from "../model/GameMap";
 import NPC from "../model/NPC";
 import UI from "../model/UI";
@@ -14,6 +15,8 @@ export default class Engine {
   activeGuideLine: boolean = false;
 
   constructor() {
+    this.initUI();
+    this.initRayPointer();
     this.initListener();
     this.initMap();
     this.render.call(this);
@@ -21,6 +24,8 @@ export default class Engine {
 
   initListener() {
     this.eventListener = new EventListener();
+    this.eventListener.initUI(this.ui);
+    this.eventListener.initRayPointer(this.rayPointer);
   }
 
   initMap() {
@@ -28,14 +33,14 @@ export default class Engine {
     this.map = map;
   }
 
-  initUI(ui: UI) {
+  initUI() {
+    const ui = new UI();
     this.ui = ui;
   }
 
-  initRayPointer(rayPointer: RayPointer) {
+  initRayPointer() {
+    const rayPointer = new RayPointer();
     this.rayPointer = rayPointer;
-    this.eventListener.initUI(this.ui);
-    this.eventListener.initRayPointer(this.rayPointer);
   }
 
   addPlayer(...units: Unit[]) {
@@ -51,6 +56,12 @@ export default class Engine {
     }
   }
 
+  addBuilding(...units: Building[]) {
+    for (let unit of units) {
+      UNIT.BUILDING.set(unit.id, unit);
+    }
+  }
+
   clearCanvas() {
     ctx.clearRect(0, 0, innerWidth, innerHeight);
   }
@@ -61,6 +72,11 @@ export default class Engine {
       this.map.render();
       this.map.drawMinimap(-200, -200, 0.1);
     }
+    UNIT.BUILDING.forEach((building: Building) => {
+      building.render();
+      // console.log(building)
+      building.detectNearByPlayer();
+    });
     UNIT.NPC.forEach((npc: NPC) => {
       npc.render();
       // console.log(npc)

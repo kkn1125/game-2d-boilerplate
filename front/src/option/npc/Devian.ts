@@ -2,7 +2,7 @@ import NPC from "../../model/NPC";
 import { COLOR } from "../../util/global";
 
 const Devian = new NPC("Devian");
-Devian.setPosition(24, 5);
+Devian.setPosition(18, 5);
 // Devian.addAutoMessage("hi");
 // Devian.addAutoMessage("my name is kimson");
 Devian.addStaticMessage(

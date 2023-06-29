@@ -1,5 +1,5 @@
 import Unit from "../model/Unit";
-import { master, SIZE, UNIT } from "../util/global";
+import { CAMERA, CONTROL, master, SIZE, UNIT } from "../util/global";
 
 export default class RayPointer {
   constructor() {
@@ -20,15 +20,14 @@ export default class RayPointer {
 
     const x = e.clientX;
     const y = e.clientY;
-
-    const playerViewX =
-      -(master.me?.x || 0) +
+    const playerViewX = -(master.me?.x || 0) * CONTROL.SCALE + CAMERA.X();
+    /* -(master.me?.x || 0) +
       centerX -
-      (SIZE.UNIT() * SIZE.SCALE()) / 2; /* innerWidth / 2; */
-    const playerViewY =
-      -(master.me?.y || 0) +
+      (SIZE.UNIT() * SIZE.SCALE()) / 2; */ /* innerWidth / 2; */
+    const playerViewY = -(master.me?.y || 0) * CONTROL.SCALE + CAMERA.Y();
+    /*  -(master.me?.y || 0) +
       centerY +
-      (SIZE.UNIT() * SIZE.SCALE()) / 2; /* innerHeight / 2; */
+      (SIZE.UNIT() * SIZE.SCALE()) / 2; */ /* innerHeight / 2; */
     const blockSize = SIZE.BLOCK() * SIZE.SCALE();
     const unitSize = SIZE.UNIT() * SIZE.SCALE();
 
@@ -37,29 +36,24 @@ export default class RayPointer {
     const yPosition = y - playerViewY;
 
     /* index는 블록단위 오브젝트 선택할 떄 사용 예정 */
-    // const xIndex = Math.floor(xPosition / blockSize);
-    // const yIndex = Math.floor(yPosition / blockSize);
+    const xIndex = Math.floor(xPosition / blockSize);
+    const yIndex = Math.floor(yPosition / blockSize);
 
-    UNIT.NPC.forEach((npc) => {
-      // console.log(npc);
+    // console.log(xIndex, yIndex);
+    const npc = Array.from(UNIT.NPC.values()).find((npc) => {
       const npcX = npc.x;
       const npcY = npc.y;
       const inHorizontal = npcX <= xPosition && xPosition <= npcX + unitSize;
       const inVertical = npcY <= yPosition && yPosition <= npcY + unitSize;
-      if (inHorizontal && inVertical) {
-        // select npc
-        if (npc.nearBy) {
-          // console.log("do question");
-          if (!this.selector[0]) {
-            this.selector[0] = npc;
-          }
-        } else {
-          this.selector = [];
-        }
-      } else {
-        this.selector = [];
+      if (inHorizontal && inVertical && npc.nearBy) {
+        return true;
       }
+      return false;
     });
-    // console.log(xIndex, yIndex);
+    if (npc && !this.selector[0]) {
+      this.selector[0] = npc;
+    } else if (!npc) {
+      this.selector = [];
+    }
   }
 }

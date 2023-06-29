@@ -1,4 +1,4 @@
-# game 2d boilerplate
+# GAME 2D BOILERPLATE - FRONT-END
 
 해당 저장소 제작의 목적은 단순 취미에 그치지 않고, 실험적이고 도전적인 프로젝트입니다. 실험 및 도전적 요소는 다음과 같습니다.
 
@@ -22,7 +22,7 @@
 
 ## Version
 
-current - v0.0.3
+current - v0.0.4
 
 ## 폴더 구조
 
@@ -30,17 +30,31 @@ current - v0.0.3
   - 📂 core
     - 📄 Engine.ts
     - 📄 EventListener.ts
+    - 📄 RayPointer.ts
     - 📄 types.d.ts
-  - 📂 map
-    - 📄 list.ts
-    - 📄 home.ts
   - 📂 model
+    - 📄 Building.ts
     - 📄 ChatQueue.ts
     - 📄 GameMap.ts
+    - 📄 Inventory.ts
+    - 📄 Item.ts
     - 📄 Message.ts
     - 📄 NPC.ts
+    - 📄 UI.ts
     - 📄 Unit.ts
     - 📄 User.ts
+  - 📂 option
+    - 📂 building
+      - 📄 Center.ts
+    - 📂 map
+      - 📄 home.ts
+    - 📂 npc
+      - 📄 Devian.ts
+      - 📄 Kimson.ts
+      - 📄 Momo.ts
+    - 📄 BuildingList.ts
+    - 📄 MapList.ts
+    - 📄 NpcList.ts
   - 📂 util
     - 📄 global.ts
     - 📄 tool.ts

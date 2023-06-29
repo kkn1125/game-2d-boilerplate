@@ -3,37 +3,37 @@ import {
   COLOR,
   CONTROL,
   ctx,
-  JOYSTICK,
   MAP_PADDING,
   master,
   SIZE,
 } from "../util/global";
-import Inventory from "./Inventory";
 
-export default class Unit {
+export default class Building {
   static id: number = 0;
   id: number = 0;
   name: string;
   x: number = 0;
   y: number = 0;
+  width: number = 0;
+  height: number = 0;
   state: string = "hold";
-  color: COLOR = COLOR.UNIT;
-  velocity: number = master.velocity;
-  money: number;
-  inventory: Inventory = new Inventory();
+  color: COLOR = COLOR.BUILDING;
+
+  hello: boolean = false;
+  nearBy: boolean = false;
 
   constructor(name: string);
   constructor(id: number, name: string);
   constructor(a: number | string, b?: string) {
     if (typeof a === "string") {
-      this.id = Unit.id;
+      this.id = Building.id;
       this.name = a;
-      Unit.id++;
+      Building.id++;
     } else if (typeof a === "number" && b) {
-      this.id = (a as number) || Unit.id++;
+      this.id = (a as number) || Building.id++;
       this.name = b;
     } else if (typeof a === "number" && !b) {
-      this.id = (a as number) || Unit.id++;
+      this.id = (a as number) || Building.id++;
       this.name = b || "guest";
     }
     this.goSpawn();
@@ -48,25 +48,8 @@ export default class Unit {
     this.color = color;
   }
 
-  goSpawn(x: number = 0, y: number = 0) {
-    // this.x = x + SIZE.BLOCK * SIZE.SCALE * 1;
-    // this.y = y + SIZE.BLOCK * SIZE.SCALE * 1;
-    // this.x = innerWidth / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
-    // this.y = innerHeight / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
-    this.setPosition(25, 5);
-  }
-
-  move() {
-    if (master.me?.id === this.id) {
-      if (JOYSTICK["w"] || JOYSTICK["s"] || JOYSTICK["a"] || JOYSTICK["d"]) {
-        // this.velocity = 1;
-        JOYSTICK["w"] && (this.y -= this.velocity);
-        JOYSTICK["s"] && (this.y += this.velocity);
-        JOYSTICK["a"] && (this.x -= this.velocity);
-        JOYSTICK["d"] && (this.x += this.velocity);
-        // this.velocity = 0;
-      }
-    }
+  goSpawn(x: number = 25, y: number = 5) {
+    this.setPosition(x, y);
   }
 
   render() {
@@ -78,29 +61,60 @@ export default class Unit {
     const responsivePositionY =
       y + this.y * CONTROL.SCALE - (master.me?.y || 0) * CONTROL.SCALE;
 
-    this.move();
-    ctx.fillStyle = this.constructor.name === "NPC" ? COLOR.NPC : COLOR.NAME;
+    ctx.fillStyle = COLOR.BUILDING_NAME;
     ctx.textAlign = "center";
     ctx.font = `bold ${16 * SIZE.SCALE() * 0.1}px sans-serif`;
     ctx.fillText(
       this.name.toUpperCase(),
       master.me?.id === this.id
         ? x + (SIZE.UNIT() * SIZE.SCALE()) / 2
-        : responsivePositionX + (SIZE.UNIT() * SIZE.SCALE()) / 2,
+        : responsivePositionX + (this.width / 2) * SIZE.SCALE(),
       master.me?.id === this.id
         ? y - (SIZE.UNIT() * SIZE.SCALE()) / 2
-        : responsivePositionY - (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : responsivePositionY +
+            this.height * SIZE.SCALE() -
+            (SIZE.UNIT() * SIZE.SCALE()) / 2
     );
     ctx.fillStyle = this.color;
     ctx.fillRect(
-      // this.x,
-      // this.y,
       master.me?.id === this.id ? x : responsivePositionX,
       master.me?.id === this.id ? y : responsivePositionY,
-      // 0,
-      // 0,
-      SIZE.UNIT() * SIZE.SCALE(),
-      SIZE.UNIT() * SIZE.SCALE()
+      this.width * SIZE.SCALE(),
+      this.height * SIZE.SCALE()
     );
+  }
+
+  detectNearByPlayer() {
+    master.units.forEach((player) => {
+      const unit = SIZE.UNIT();
+      const scale = SIZE.SCALE();
+      const npcX = this.x * CONTROL.SCALE;
+      const npcY = this.y * CONTROL.SCALE;
+      const playerX = player.x * CONTROL.SCALE;
+      const playerY = player.y * CONTROL.SCALE;
+      const leftSide = npcX - unit * scale * 2;
+      const rightSide = npcX + unit * scale * 2;
+      const topSide = npcY - unit * scale * 2;
+      const bottomSide = npcY + unit * scale * 2;
+      if (
+        leftSide < playerX &&
+        playerX < rightSide &&
+        topSide < playerY &&
+        playerY < bottomSide
+      ) {
+        this.nearBy = true;
+        this.onHello();
+      } else {
+        this.nearBy = false;
+        this.offHello();
+      }
+    });
+  }
+
+  onHello() {
+    this.hello = true;
+  }
+  offHello() {
+    this.hello = false;
   }
 }

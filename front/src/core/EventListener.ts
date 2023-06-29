@@ -84,12 +84,10 @@ export default class EventListener {
   }
 
   handleNpcClick(e: MouseEvent) {
-    // const target = e.target as HTMLButtonElement;
-    // const type = target.dataset.type;
-    // const npcNum = Number(target.dataset.npcNum);
     const npc = this.rayPointer.selector?.[0] as NPC;
     if (npc && npc.nearBy && npc.chatQueue.temp.length === 0) {
       npc.talk();
+      if (master.me) master.me.velocity = 0;
     }
   }
 }
