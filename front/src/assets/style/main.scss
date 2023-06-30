@@ -9,6 +9,45 @@ body,
   background-color: rgb(48, 48, 48);
 }
 
+#joystick {
+  $scale: 5;
+  $ball-size: 8;
+  $joystick-size: 20;
+  background-color: #ffffff56;
+  border: 3px solid #ffffff9c;
+  position: absolute;
+  bottom: 5%;
+  left: 5%;
+  width: $scale * $joystick-size + px;
+  height: $scale * $joystick-size + px;
+  border-radius: 99999px;
+  -webkit-border-radius: 99999px;
+  -moz-border-radius: 99999px;
+  -ms-border-radius: 99999px;
+  -o-border-radius: 99999px;
+
+  #ball {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    background-color: #ffffffac;
+
+    width: $scale * $ball-size + px;
+    height: $scale * $ball-size + px;
+
+    border-radius: 99999px;
+    -webkit-border-radius: 99999px;
+    -moz-border-radius: 99999px;
+    -ms-border-radius: 99999px;
+    -o-border-radius: 99999px;
+  }
+}
+
 .chat-modal {
   &.modal {
     position: fixed;

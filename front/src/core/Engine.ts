@@ -70,7 +70,7 @@ export default class Engine {
     this.clearCanvas();
     if (this.map) {
       this.map.render();
-      this.map.drawMinimap(-200, -200, 0.1);
+      this.map.drawMinimap(-200, -200, innerWidth < 370 ? 0.05 : 0.1);
     }
     UNIT.BUILDING.forEach((building: Building) => {
       building.render();

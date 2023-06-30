@@ -15,7 +15,7 @@ export default class UI {
     return document.querySelectorAll(".chat-modal.modal").length > 0;
   }
 
-  static CHAT_MODAL = (id: number, name: string, message: string) => {
+  static CHAT_MODAL(id: number, name: string, message: string) {
     const modal = UI.createEl("div");
     modal.classList.add("chat-modal", "modal");
     const title = UI.createEl("div");
@@ -70,12 +70,34 @@ export default class UI {
       modal;
     }
     return modal;
-  };
+  }
+
+  static JOYSTICK() {
+    const joystick = this.createEl("div");
+    joystick.id = "joystick";
+    joystick.classList.add("joystick");
+
+    const ball = this.createEl("div");
+    ball.id = "ball";
+
+    joystick.append(ball);
+    document.body.append(joystick);
+
+    return [joystick, ball] as [HTMLDivElement, HTMLDivElement];
+  }
 
   APP = document.getElementById("app") as HTMLDivElement;
+  ball: HTMLDivElement;
 
   constructor() {
     // this.openModal("test", "wow");
+
+    this.showJoystick();
+  }
+
+  showJoystick() {
+    const [joystick, ball] = UI.JOYSTICK();
+    this.ball = ball;
   }
 
   append(ui: HTMLElement) {
