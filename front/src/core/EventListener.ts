@@ -21,10 +21,19 @@ export default class EventListener {
       "mousedown",
       this.handleJoyStickMouseDown.bind(this)
     );
+    window.addEventListener(
+      "touchstart",
+      this.handleJoyStickTouchStart.bind(this)
+    );
     window.addEventListener("mouseup", this.handleJoyStickMouseUp.bind(this));
+    window.addEventListener("touchend", this.handleJoyStickTouchEnd.bind(this));
     window.addEventListener(
       "mousemove",
       this.handleJoyStickMouseMove.bind(this)
+    );
+    window.addEventListener(
+      "touchmove",
+      this.handleJoyStickTouchMove.bind(this)
     );
 
     // window.addEventListener(
@@ -128,11 +137,47 @@ export default class EventListener {
       this.mobJoystick.boundary = joystick;
     }
   }
+  handleJoyStickTouchStart(e: TouchEvent) {
+    // console.log(e);
+    const target = e.target as HTMLDivElement;
+    const ball = ((target.id === "ball" && target) ||
+      target.closest("#ball") ||
+      target.querySelector("#ball") ||
+      target.parentElement?.querySelector("#ball")) as Element;
+    const joystick =
+      (target.closest("#joystick") as Element) ||
+      (target.parentElement?.id === "joystick" && target.parentElement);
+    if (joystick) {
+      this.mobJoystick.touch = true;
+      this.mobJoystick.ball = ball;
+      this.mobJoystick.boundary = joystick;
+    }
+  }
 
   handleJoyStickMouseUp(e: MouseEvent) {
     const ball = this.mobJoystick.ball as HTMLDivElement;
     if (ball) ball.style.transform = `translate(-50%, -50%)`;
 
+    if (this.mobJoystick.touch) {
+      this.mobJoystick.touch = false;
+      this.mobJoystick.ball = null;
+      this.mobJoystick.boundary = null;
+      if (master.me) {
+        master.me.velocity = 0;
+      }
+
+      JOYSTICK["w"] = false;
+      JOYSTICK["s"] = false;
+      JOYSTICK["a"] = false;
+      JOYSTICK["d"] = false;
+    }
+  }
+
+  handleJoyStickTouchEnd(e: TouchEvent) {
+    const ball = this.mobJoystick.ball as HTMLDivElement;
+    // console.log(ball, ball.style);
+    if (ball) ball.style.transform = `translate(-50%, -50%)`;
+    // console.log(ball);
     if (this.mobJoystick.touch) {
       this.mobJoystick.touch = false;
       this.mobJoystick.ball = null;
@@ -287,6 +332,147 @@ export default class EventListener {
     }
   }
 
+  handleJoyStickTouchMove(t: TouchEvent) {
+    const e = t.touches[0];
+
+    if (this.mobJoystick.touch) {
+      const rect =
+        this.mobJoystick.boundary?.getBoundingClientRect() as DOMRect;
+
+      const joyCenterX = rect.width / 2;
+      const joyCenterY = rect.height / 2;
+      const joyLeft = rect.left;
+      const joyTop = rect.top;
+      // console.log(rect.width, this.mobJoystick.ball);
+
+      const yJoy = joyCenterY + joyTop;
+      const xJoy = joyCenterX + joyLeft;
+
+      const x = e.clientX;
+      const y = e.clientY;
+
+      const axisX = x - xJoy;
+      const axisY = y - yJoy;
+
+      const isMinusX = axisX < 0 ? -1 : 1;
+      const isMinusY = axisY < 0 ? -1 : 1;
+
+      // console.log("center point", xJoy, yJoy);
+      // console.log("move point from center", axisX, axisY);
+
+      const degX = parseInt(axisX.toString());
+      const degY = parseInt(axisY.toString());
+      const roundDist = 2 * Math.PI * 50;
+      const dist = Math.sqrt(degX ** 2 + degY ** 2);
+      const limitDist = 50;
+
+      const bandingX = Math.sqrt(50 ** 2 - axisY ** 2);
+      const bandingY = Math.sqrt(50 ** 2 - axisX ** 2);
+
+      const radians = Math.atan2(degX, degY);
+
+      const value = parseInt(((radians / Math.PI) * 10 * 18 + 180).toString());
+
+      if (value < 60 && value > 30) {
+        // left top
+        // console.log("lt");
+        JOYSTICK["w"] = true;
+        JOYSTICK["a"] = true;
+        JOYSTICK["s"] = false;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 30 || value > 330) {
+        // top
+        // console.log("t");
+        JOYSTICK["w"] = true;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = false;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 330 && value > 300) {
+        // right top
+        // console.log("rt");
+        JOYSTICK["w"] = true;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = false;
+        JOYSTICK["d"] = true;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 300 && value > 240) {
+        // right
+        // console.log("r");
+        JOYSTICK["w"] = false;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = false;
+        JOYSTICK["d"] = true;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 240 && value > 210) {
+        // right bottom
+        // console.log("rb");
+        JOYSTICK["w"] = false;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = true;
+        JOYSTICK["d"] = true;
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 210 && value > 150) {
+        // bottom
+        // console.log("b");
+        JOYSTICK["w"] = false;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = true;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 150 && value > 120) {
+        // left bottom
+        // console.log("lb");
+        JOYSTICK["w"] = false;
+        JOYSTICK["s"] = true;
+        JOYSTICK["a"] = true;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 120 && value > 60) {
+        // left
+        // console.log("l");
+        JOYSTICK["w"] = false;
+        JOYSTICK["s"] = false;
+        JOYSTICK["a"] = true;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      }
+
+      (
+        this.mobJoystick.boundary as HTMLDivElement
+      ).style.transform = `rotate(${-value}deg)`;
+      (
+        this.mobJoystick.ball as HTMLDivElement
+      ).style.transform = `translate(-50%, ${
+        -((dist > limitDist ? limitDist : dist) / 50) * 100 - 50
+      }%)`;
+    }
+  }
+
   canvasSize() {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
@@ -294,6 +480,7 @@ export default class EventListener {
 
   handleResizeCanvas() {
     this.canvasSize();
+    this.ui.showJoystick(!navigator.userAgent.match(/Win64/));
   }
 
   handleNpcClick(e: MouseEvent) {

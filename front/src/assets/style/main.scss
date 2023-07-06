@@ -71,6 +71,9 @@ body,
     @media (min-width: 0px) and (max-width: 376px) {
       width: 80%;
     }
+    @media (min-width: 376px) and (max-width: 568px) {
+      width: 75%;
+    }
   }
   &.title {
     font-weight: 700;
@@ -87,6 +90,9 @@ body,
     @media (min-width: 0px) and (max-width: 376px) {
       font-size: 1.2rem;
     }
+    @media (min-width: 376px) and (max-width: 568px) {
+      font-size: 1.1rem;
+    }
   }
   &.content-wrap {
     display: flex;
@@ -101,6 +107,9 @@ body,
       background-position: center;
       @media (min-width: 0px) and (max-width: 376px) {
         width: 80px;
+      }
+      @media (min-width: 376px) and (max-width: 568px) {
+        width: 70px;
       }
     }
     .content {
@@ -139,6 +148,11 @@ body,
         font-size: 1rem;
         min-height: 80px;
         max-height: 120px;
+      }
+      @media (min-width: 376px) and (max-width: 568px) {
+        font-size: 0.95rem;
+        min-height: 70px;
+        max-height: 100px;
       }
     }
   }

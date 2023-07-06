@@ -92,12 +92,16 @@ export default class UI {
   constructor() {
     // this.openModal("test", "wow");
 
-    this.showJoystick();
+    this.showJoystick(!navigator.userAgent.match(/Win64/));
   }
 
-  showJoystick() {
-    const [joystick, ball] = UI.JOYSTICK();
-    this.ball = ball;
+  showJoystick(isMobile: boolean) {
+    if (isMobile) {
+      const [joystick, ball] = UI.JOYSTICK();
+      this.ball = ball;
+    } else {
+      document.querySelector("#joystick")?.remove?.();
+    }
   }
 
   append(ui: HTMLElement) {

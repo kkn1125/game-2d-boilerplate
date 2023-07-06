@@ -70,11 +70,9 @@ export default class Engine {
     this.clearCanvas();
     if (this.map) {
       this.map.render();
-      this.map.drawMinimap(-200, -200, innerWidth < 370 ? 0.05 : 0.1);
     }
     UNIT.BUILDING.forEach((building: Building) => {
       building.render();
-      // console.log(building)
       building.detectNearByPlayer();
     });
     UNIT.NPC.forEach((npc: NPC) => {
@@ -90,6 +88,15 @@ export default class Engine {
     }
     if (master.me) {
       master.me.renderMoney();
+    }
+    if (this.map) {
+      const scale =
+        innerWidth < 376
+          ? 0.05
+          : 376 < innerWidth && innerWidth < 568
+          ? 0.06
+          : 0.1;
+      this.map.drawMinimap(-200, -200, scale);
     }
     requestAnimationFrame(this.render.bind(this));
   }

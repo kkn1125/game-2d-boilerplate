@@ -19,7 +19,7 @@ export default defineConfig(({ command, mode }) => {
       __APP_ENV__: env.APP_ENV,
     },
     server: {
-      host: process.env.HOST,
+      host: process.env.HOST || "0.0.0.0",
       port: Number(process.env.PORT) || 3000,
     },
     base: "",
