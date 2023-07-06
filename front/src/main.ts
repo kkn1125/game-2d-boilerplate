@@ -6,6 +6,7 @@ import { master } from "./util/global";
 
 const testUser = new User("test");
 master.me = testUser;
+master.me.money = 1_500_000_000;
 
 const engine = new Engine();
 engine.activeGuideLine = false;

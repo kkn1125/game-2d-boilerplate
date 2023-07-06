@@ -3,6 +3,9 @@ import UI from "../model/UI";
 import { canvas, CONTROL, JOYSTICK, master, SIZE, UNIT } from "../util/global";
 import RayPointer from "./RayPointer";
 
+let beforeX = 0;
+let beforeY = 0;
+
 export default class EventListener {
   constructor() {
     window.addEventListener("load", this.handleResizeCanvas.bind(this));
@@ -86,12 +89,12 @@ export default class EventListener {
       });
     }
     if ((key as OtherKeySet) === "+") {
-      if (CONTROL.SCALE + 1 > CONTROL.MAX_ZOOM) return;
-      CONTROL.SCALE += 1;
+      if (CONTROL.SCALE + CONTROL.ZOOM_RATIO > CONTROL.MAX_ZOOM) return;
+      CONTROL.SCALE += CONTROL.ZOOM_RATIO;
     }
     if ((key as OtherKeySet) === "-") {
-      if (CONTROL.SCALE - 1 < CONTROL.MIN_ZOOM) return;
-      CONTROL.SCALE -= 1;
+      if (CONTROL.SCALE - CONTROL.ZOOM_RATIO < CONTROL.MIN_ZOOM) return;
+      CONTROL.SCALE -= CONTROL.ZOOM_RATIO;
     }
     if (JOYSTICK.hasOwnProperty(key) && !UI.isOpenModal()) {
       JOYSTICK[key] = true;
@@ -129,16 +132,20 @@ export default class EventListener {
   handleJoyStickMouseUp(e: MouseEvent) {
     const ball = this.mobJoystick.ball as HTMLDivElement;
     if (ball) ball.style.transform = `translate(-50%, -50%)`;
-    this.mobJoystick.touch = false;
-    this.mobJoystick.ball = null;
-    this.mobJoystick.boundary = null;
-    if (master.me) {
-      master.me.velocity = 0;
+
+    if (this.mobJoystick.touch) {
+      this.mobJoystick.touch = false;
+      this.mobJoystick.ball = null;
+      this.mobJoystick.boundary = null;
+      if (master.me) {
+        master.me.velocity = 0;
+      }
+
+      JOYSTICK["w"] = false;
+      JOYSTICK["s"] = false;
+      JOYSTICK["a"] = false;
+      JOYSTICK["d"] = false;
     }
-    JOYSTICK["w"] = false;
-    JOYSTICK["s"] = false;
-    JOYSTICK["a"] = false;
-    JOYSTICK["d"] = false;
   }
 
   handleJoyStickMouseMove(e: MouseEvent) {
@@ -164,109 +171,119 @@ export default class EventListener {
       const isMinusX = axisX < 0 ? -1 : 1;
       const isMinusY = axisY < 0 ? -1 : 1;
 
-      const r = rect.width / 2;
+      // console.log("center point", xJoy, yJoy);
+      // console.log("move point from center", axisX, axisY);
 
-      let temp = 0;
+      const degX = parseInt(axisX.toString());
+      const degY = parseInt(axisY.toString());
+      const roundDist = 2 * Math.PI * 50;
+      const dist = Math.sqrt(degX ** 2 + degY ** 2);
+      const limitDist = 50;
 
-      const getDist = (w: number, h: number) => Math.sqrt(w ** 2 + h ** 2);
+      const bandingX = Math.sqrt(50 ** 2 - axisY ** 2);
+      const bandingY = Math.sqrt(50 ** 2 - axisX ** 2);
 
-      const middle = () => {
-        const value = parseFloat((axisX / axisY).toFixed(2));
-        const isUpper = Math.abs(value) > 0.5 && Math.abs(value) <= 2;
-        return isUpper;
-      };
+      const radians = Math.atan2(degX, degY);
 
-      const isTop = () => {
-        const value = parseFloat((axisX / axisY).toFixed(2));
-        const isUpper = Math.abs(value) >= 0 && Math.abs(value) < 0.5;
-        return isUpper && isMinusY < 0;
-      };
+      const value = parseInt(((radians / Math.PI) * 10 * 18 + 180).toString());
 
-      const isBottom = () => {
-        const value = parseFloat((axisX / axisY).toFixed(2));
-        const isUpper = Math.abs(value) >= 0 && Math.abs(value) < 0.5;
-        return isUpper && isMinusY > 0;
-      };
-
-      const isLeft = () => {
-        const value = parseFloat((axisX / axisY).toFixed(2));
-        const isUpper = Math.abs(value) > 2;
-        return isUpper && isMinusX < 0;
-      };
-
-      const isRight = () => {
-        const value = parseFloat((axisX / axisY).toFixed(2));
-        const isUpper = Math.abs(value) >= 2;
-        return isUpper && isMinusX > 0;
-      };
-
-      JOYSTICK["w"] = false;
-      JOYSTICK["s"] = false;
-      JOYSTICK["a"] = false;
-      JOYSTICK["d"] = false;
-
-      if (middle() && isMinusX < 0 && isMinusY < 0) {
-        console.log("left top");
+      if (value < 60 && value > 30) {
+        // left top
+        // console.log("lt");
         JOYSTICK["w"] = true;
         JOYSTICK["a"] = true;
+        JOYSTICK["s"] = false;
+        JOYSTICK["d"] = false;
 
         if (master.me) {
           master.me.velocity = master.velocity;
         }
-      } else if (middle() && isMinusX > 0 && isMinusY < 0) {
-        console.log("right top");
+      } else if (value < 30 || value > 330) {
+        // top
+        // console.log("t");
         JOYSTICK["w"] = true;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = false;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 330 && value > 300) {
+        // right top
+        // console.log("rt");
+        JOYSTICK["w"] = true;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = false;
         JOYSTICK["d"] = true;
 
         if (master.me) {
           master.me.velocity = master.velocity;
         }
-      } else if (middle() && isMinusX < 0 && isMinusY > 0) {
-        console.log("left bottom");
-        JOYSTICK["s"] = true;
-        JOYSTICK["a"] = true;
-
-        if (master.me) {
-          master.me.velocity = master.velocity;
-        }
-      } else if (middle() && isMinusX > 0 && isMinusY > 0) {
-        console.log("right bottom");
-        JOYSTICK["s"] = true;
+      } else if (value < 300 && value > 240) {
+        // right
+        // console.log("r");
+        JOYSTICK["w"] = false;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = false;
         JOYSTICK["d"] = true;
 
         if (master.me) {
           master.me.velocity = master.velocity;
         }
-      } else if (isTop()) {
-        console.log("top");
-        JOYSTICK["w"] = true;
-        if (master.me) {
-          master.me.velocity = master.velocity;
-        }
-      } else if (isBottom()) {
-        console.log("bottom");
+      } else if (value < 240 && value > 210) {
+        // right bottom
+        // console.log("rb");
+        JOYSTICK["w"] = false;
+        JOYSTICK["a"] = false;
         JOYSTICK["s"] = true;
-        if (master.me) {
-          master.me.velocity = master.velocity;
-        }
-      } else if (isLeft()) {
-        console.log("left");
-        JOYSTICK["a"] = true;
-        if (master.me) {
-          master.me.velocity = master.velocity;
-        }
-      } else if (isRight()) {
-        console.log("right");
         JOYSTICK["d"] = true;
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 210 && value > 150) {
+        // bottom
+        // console.log("b");
+        JOYSTICK["w"] = false;
+        JOYSTICK["a"] = false;
+        JOYSTICK["s"] = true;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 150 && value > 120) {
+        // left bottom
+        // console.log("lb");
+        JOYSTICK["w"] = false;
+        JOYSTICK["s"] = true;
+        JOYSTICK["a"] = true;
+        JOYSTICK["d"] = false;
+
+        if (master.me) {
+          master.me.velocity = master.velocity;
+        }
+      } else if (value < 120 && value > 60) {
+        // left
+        // console.log("l");
+        JOYSTICK["w"] = false;
+        JOYSTICK["s"] = false;
+        JOYSTICK["a"] = true;
+        JOYSTICK["d"] = false;
+
         if (master.me) {
           master.me.velocity = master.velocity;
         }
       }
 
-      // console.log(axisX / axisY);
-      (this.mobJoystick.ball as HTMLDivElement).style.transform = `translate(${
-        axisX - 50
-      }%,${axisY - 50}%)`;
+      (
+        this.mobJoystick.boundary as HTMLDivElement
+      ).style.transform = `rotate(${-value}deg)`;
+      (
+        this.mobJoystick.ball as HTMLDivElement
+      ).style.transform = `translate(-50%, ${
+        -((dist > limitDist ? limitDist : dist) / 50) * 100 - 50
+      }%)`;
     }
   }
 

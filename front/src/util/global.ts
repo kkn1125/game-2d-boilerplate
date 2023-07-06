@@ -19,12 +19,12 @@ export enum COLOR {
   ROAD = "#cccccc", // road
   UNIT = "#ffff00", // unit
   NPC = "#bc0fab", // unit
-  NAME = "#222222", // unit
+  NAME = "#ffffff", // unit
   BUILDING_NAME = "#ffffff", // unit
   BUILDING = "#45fcab", // unit
   DEVIAN = "#0ff0ff", // unit
   MOMO = "#9a2fa0", // unit
-  KIMSON = "#ff0000", // unit
+  KIMSON = "#a6ef0a", // unit
 }
 
 export const CONTROL = {
@@ -33,6 +33,8 @@ export const CONTROL = {
   SCALE: 1,
   MAX_ZOOM: 2,
   MIN_ZOOM: 1,
+  ZOOM_RATIO: 0.5,
+  STATIC_SCALE: 15,
 };
 
 // window.CONTROL = CONTROL;
@@ -40,7 +42,7 @@ export const CONTROL = {
 export const SIZE = {
   BLOCK: () => 5,
   UNIT: () => 3,
-  SCALE: () => 10 * CONTROL.SCALE,
+  SCALE: () => CONTROL.STATIC_SCALE * CONTROL.SCALE,
 };
 export const CAMERA = {
   X: () => innerWidth / 2 - (SIZE.UNIT() * SIZE.SCALE()) / 2,

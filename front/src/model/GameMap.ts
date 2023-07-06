@@ -330,12 +330,16 @@ export default class GameMap {
 
   minimap(x: number, y: number, scale: number) {
     const unitSize = SIZE.UNIT() * SIZE.SCALE() * scale;
-    const blockSize = SIZE.BLOCK() * SIZE.SCALE()/CONTROL.SCALE * scale;
+    const blockSize =
+      ((SIZE.BLOCK() * SIZE.SCALE()) /
+        (CONTROL.STATIC_SCALE / 10) /
+        CONTROL.SCALE) *
+      scale;
     const playerViewX =
-      -(x !== undefined ? x : master.me?.x || 0) * CONTROL.SCALE/CONTROL.SCALE * scale +
+      -(x !== undefined ? x : master.me?.x || 0) * scale +
       (x !== undefined ? 0 : CAMERA.X()); /* innerWidth / 2; */
     const playerViewY =
-      -(y !== undefined ? y : master.me?.y || 0) * CONTROL.SCALE/CONTROL.SCALE * scale +
+      -(y !== undefined ? y : master.me?.y || 0) * scale +
       (y !== undefined ? 0 : CAMERA.Y()); /* innerHeight / 2; */
 
     const binary = this.binary;
@@ -356,18 +360,25 @@ export default class GameMap {
 
   miniMapPlayer(x: number, y: number, scale: number) {
     master.units.forEach((user) => {
-      const userX = user.x * CONTROL.SCALE/CONTROL.SCALE * scale;
-      const userY = user.y * CONTROL.SCALE/CONTROL.SCALE * scale;
-      const unitSize = SIZE.UNIT() * SIZE.SCALE()/CONTROL.SCALE;
+      const userX = user.x * scale;
+      const userY = user.y * scale;
+      const unitSize =
+        (SIZE.UNIT() * SIZE.SCALE()) /
+        (CONTROL.STATIC_SCALE / 10) /
+        CONTROL.SCALE;
 
       ctx.textAlign = "center";
       ctx.fillStyle = COLOR.BLACK;
       ctx.font = `bold ${36 * scale * 3}px sans-serif`;
-      ctx.fillText(user.name, userX - x * scale, userY - y * scale - 2);
+      ctx.fillText(
+        user.name,
+        userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        userY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+      );
       ctx.fillStyle = COLOR.UNIT;
       ctx.fillRect(
-        userX - x * scale,
-        userY - y * scale,
+        userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        userY / (CONTROL.STATIC_SCALE / 10) - y * scale,
         unitSize * scale,
         unitSize * scale
       );
@@ -376,18 +387,25 @@ export default class GameMap {
 
   miniMapNPC(x: number, y: number, scale: number) {
     UNIT.NPC.forEach((npc) => {
-      const npcX = npc.x * CONTROL.SCALE/CONTROL.SCALE * scale;
-      const npcY = npc.y * CONTROL.SCALE/CONTROL.SCALE * scale;
-      const unitSize = SIZE.UNIT() * SIZE.SCALE()/CONTROL.SCALE;
+      const npcX = npc.x * scale;
+      const npcY = npc.y * scale;
+      const unitSize =
+        (SIZE.UNIT() * SIZE.SCALE()) /
+        (CONTROL.STATIC_SCALE / 10) /
+        CONTROL.SCALE;
 
       ctx.textAlign = "center";
       ctx.fillStyle = COLOR.BLACK;
       ctx.font = `bold ${36 * scale * 3}px sans-serif`;
-      ctx.fillText(npc.name, npcX - x * scale, npcY - y * scale - 2);
+      ctx.fillText(
+        npc.name,
+        npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        npcY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+      );
       ctx.fillStyle = COLOR.NPC;
       ctx.fillRect(
-        npcX - x * scale,
-        npcY - y * scale,
+        npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        npcY / (CONTROL.STATIC_SCALE / 10) - y * scale,
         unitSize * scale,
         unitSize * scale
       );
@@ -396,22 +414,27 @@ export default class GameMap {
 
   miniMapBuilding(x: number, y: number, scale: number) {
     UNIT.BUILDING.forEach((building) => {
-      const buildingX = building.x * CONTROL.SCALE/CONTROL.SCALE * scale;
-      const buildingY = building.y * CONTROL.SCALE/CONTROL.SCALE * scale;
-      const unitSize = SIZE.UNIT() * SIZE.SCALE()/CONTROL.SCALE;
+      const buildingX = building.x * scale;
+      const buildingY = building.y * scale;
+      const unitSize = (SIZE.UNIT() * SIZE.SCALE()) / CONTROL.SCALE;
 
       ctx.textAlign = "center";
       ctx.fillStyle = COLOR.BLACK;
       ctx.font = `bold ${36 * scale * 3}px sans-serif`;
       ctx.fillText(
         building.name,
-        buildingX + building.width / 2 - x * scale,
-        buildingY + building.height - y * scale - 2
+        buildingX / (CONTROL.STATIC_SCALE / 10) +
+          building.width / 2 -
+          x * scale,
+        buildingY / (CONTROL.STATIC_SCALE / 10) +
+          building.height -
+          y * scale -
+          2
       );
       ctx.fillStyle = COLOR.BUILDING;
       ctx.fillRect(
-        buildingX - x * scale,
-        buildingY - y * scale,
+        buildingX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        buildingY / (CONTROL.STATIC_SCALE / 10) - y * scale,
         building.width,
         building.height
       );

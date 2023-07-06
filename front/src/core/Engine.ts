@@ -88,6 +88,9 @@ export default class Engine {
     if (this.activeGuideLine) {
       this.guideLine();
     }
+    if (master.me) {
+      master.me.renderMoney();
+    }
     requestAnimationFrame(this.render.bind(this));
   }
 

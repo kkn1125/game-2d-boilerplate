@@ -64,6 +64,21 @@ export default class Building {
     ctx.fillStyle = COLOR.BUILDING_NAME;
     ctx.textAlign = "center";
     ctx.font = `bold ${16 * SIZE.SCALE() * 0.1}px sans-serif`;
+
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#000000";
+    ctx.strokeText(
+      this.name.toUpperCase(),
+      master.me?.id === this.id
+        ? x + (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : responsivePositionX + (this.width / 2) * SIZE.SCALE(),
+      master.me?.id === this.id
+        ? y - (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : responsivePositionY +
+            this.height * SIZE.SCALE() -
+            (SIZE.UNIT() * SIZE.SCALE()) / 2
+    );
+
     ctx.fillText(
       this.name.toUpperCase(),
       master.me?.id === this.id

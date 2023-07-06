@@ -19,7 +19,7 @@ export default class Unit {
   state: string = "hold";
   color: COLOR = COLOR.UNIT;
   velocity: number = master.velocity;
-  money: number;
+  money: number = 0;
   inventory: Inventory = new Inventory();
 
   constructor(name: string);
@@ -79,9 +79,23 @@ export default class Unit {
       y + this.y * CONTROL.SCALE - (master.me?.y || 0) * CONTROL.SCALE;
 
     this.move();
-    ctx.fillStyle = this.constructor.name === "NPC" ? COLOR.NPC : COLOR.NAME;
+
     ctx.textAlign = "center";
     ctx.font = `bold ${16 * SIZE.SCALE() * 0.1}px sans-serif`;
+
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#000000";
+    ctx.strokeText(
+      this.name.toUpperCase(),
+      master.me?.id === this.id
+        ? x + (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : responsivePositionX + (SIZE.UNIT() * SIZE.SCALE()) / 2,
+      master.me?.id === this.id
+        ? y - (SIZE.UNIT() * SIZE.SCALE()) / 2
+        : responsivePositionY - (SIZE.UNIT() * SIZE.SCALE()) / 2
+    );
+
+    ctx.fillStyle = this.constructor.name === "NPC" ? this.color : COLOR.NAME;
     ctx.fillText(
       this.name.toUpperCase(),
       master.me?.id === this.id
@@ -102,5 +116,14 @@ export default class Unit {
       SIZE.UNIT() * SIZE.SCALE(),
       SIZE.UNIT() * SIZE.SCALE()
     );
+  }
+
+  renderMoney() {
+    ctx.textAlign = "right";
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = "#000000";
+    ctx.strokeText("💰" + this.money.toLocaleString("ko"), innerWidth - 20, 50);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("💰" + this.money.toLocaleString("ko"), innerWidth - 20, 50);
   }
 }
