@@ -1,4 +1,5 @@
-import { DEFAULT_NPC_IMG, UNIT } from "../util/global";
+import { DEFAULT_NPC_IMG, master, SIZE, UNIT } from "../util/global";
+import Unit from "./Unit";
 
 export default class UI {
   static clearChatModals() {
@@ -90,9 +91,66 @@ export default class UI {
   ball: HTMLDivElement;
 
   constructor() {
-    // this.openModal("test", "wow");
-
     this.showJoystick(!navigator.userAgent.match(/Win64/));
+  }
+
+  openInventory() {
+    const inventory = UI.createEl("div");
+    inventory.id = "inventory";
+    inventory.classList.add("inventory", "open");
+    const topBar = UI.createEl("div");
+    topBar.id = "inventory-top-bar";
+    // topBar.innerText = "Inventory";
+    const title = UI.createEl("div");
+    title.id = "inventory-title";
+    title.innerText = "Inventory";
+    const exitBtn = UI.createEl("button");
+    exitBtn.id = "inventory-exit-btn";
+    exitBtn.innerText = "❌";
+
+    topBar.append(title, exitBtn);
+    inventory.append(topBar);
+
+    (master.me as Unit).inventory.bag.forEach((row, rowId) => {
+      const rowEl = UI.createEl("div") as HTMLDivElement;
+      rowEl.classList.add("row");
+      rowEl.dataset.row = String(rowId);
+
+      row.forEach((cell, cellId) => {
+        const cellEl = UI.createEl("div") as HTMLDivElement;
+        cellEl.dataset.cell = String(cellId);
+        cellEl.classList.add("cell");
+        if (cell.type === "none") {
+          cellEl.classList.add("empty");
+        } else {
+          cellEl.classList.add("item");
+          cellEl.innerText = cell.name;
+        }
+        if (master.me) {
+          if (
+            rowId * SIZE.INVENTORY.X + cellId + 1 >=
+            SIZE.INVENTORY.X * SIZE.INVENTORY.Y - master.me.inventory.lockCount
+          ) {
+            cellEl.classList.add("lock");
+          }
+        }
+        rowEl.append(cellEl);
+      });
+
+      inventory.append(rowEl);
+    });
+
+    document.body.append(inventory);
+
+    setTimeout(() => {
+      if (inventory) {
+        inventory.classList.remove("open");
+      }
+    }, 1000);
+  }
+
+  closeInventory() {
+    document.querySelectorAll("#inventory").forEach((el) => el.remove());
   }
 
   showJoystick(isMobile: boolean) {
@@ -100,7 +158,7 @@ export default class UI {
       const [joystick, ball] = UI.JOYSTICK();
       this.ball = ball;
     } else {
-      document.querySelector("#joystick")?.remove?.();
+      document.querySelectorAll("#joystick").forEach((el) => el.remove());
     }
   }
 

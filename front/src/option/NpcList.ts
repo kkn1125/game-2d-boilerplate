@@ -1,5 +1,6 @@
+import David from "./npc/David";
 import Devian from "./npc/Devian";
 import Kimson from "./npc/Kimson";
 import Momo from "./npc/Momo";
 
-export default [Devian, Momo, Kimson];
+export default [Devian, Momo, Kimson, David];

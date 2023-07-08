@@ -99,6 +99,13 @@ export default class NPC extends Unit {
       const unitSize = (SIZE.UNIT() * SIZE.SCALE()) / 2;
 
       ctx.font = `bold ${36 * SIZE.SCALE() * 0.1}px sans-serif`;
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = COLOR.WHITE;
+      ctx.strokeText(
+        "?",
+        x + npcX - playerX + unitSize,
+        -(SIZE.SCALE() * 2.5) + size + y + npcY - playerY - unitSize
+      );
       ctx.fillStyle = COLOR.WARN;
       ctx.fillText(
         "?",

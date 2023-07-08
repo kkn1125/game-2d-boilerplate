@@ -10,6 +10,10 @@ export default class EventListener {
   constructor() {
     window.addEventListener("load", this.handleResizeCanvas.bind(this));
     window.addEventListener("resize", this.handleResizeCanvas.bind(this));
+    window.addEventListener(
+      "click",
+      this.handleClickOtherInteractive.bind(this)
+    );
     window.addEventListener("click", this.handleNpcClick.bind(this));
     window.addEventListener(
       "keydown",
@@ -78,6 +82,28 @@ export default class EventListener {
     this.rayPointer = rayPointer;
   }
 
+  handleClickOtherInteractive(e: MouseEvent) {
+    const target = e.target as HTMLDivElement;
+    if (target.id === "inventory-exit-btn") {
+      this.ui.closeInventory();
+    }
+
+    if (
+      target.classList.contains("cell") &&
+      !target.classList.contains("lock")
+    ) {
+      document.querySelectorAll(".cell").forEach((cell) => {
+        cell.classList.remove("select");
+      });
+      target.classList.add("select");
+    }
+  }
+
+  handleOpenInventory() {
+    // this.ui.openInventory()
+    this.ui.openInventory();
+  }
+
   handleJoyStickDown(e: KeyboardEvent) {
     const key = e.key as KeySet;
     if ((key as OtherKeySet) === " ") {
@@ -90,12 +116,25 @@ export default class EventListener {
         }
       });
     }
+    if ((key as OtherKeySet) === "i") {
+      if (master.me) {
+        if (!document.querySelector("#inventory")) {
+          this.ui.openInventory();
+        } else {
+          this.ui.closeInventory();
+        }
+      }
+    }
     if ((key as OtherKeySet) === "Escape") {
       UNIT.NPC.forEach((npc) => {
         if (npc.nearBy && npc.chatQueue.temp.length > 0) {
           npc.talkExit();
         }
       });
+
+      if (document.querySelector("#inventory")) {
+        this.ui.closeInventory();
+      }
     }
     if ((key as OtherKeySet) === "+") {
       if (CONTROL.SCALE + CONTROL.ZOOM_RATIO > CONTROL.MAX_ZOOM) return;

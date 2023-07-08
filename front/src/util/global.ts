@@ -13,8 +13,9 @@ import User from "../model/User";
 import Building from "../model/Building";
 
 export enum COLOR {
-  WARN = "#ff0000", // warn
   BLACK = "#000000", // block
+  WHITE = "#ffffff", // white
+  WARN = "#ff0000", // warn
   BLOCK = "#555555", // block
   ROAD = "#cccccc", // road
   UNIT = "#ffff00", // unit
@@ -22,9 +23,11 @@ export enum COLOR {
   NAME = "#ffffff", // unit
   BUILDING_NAME = "#ffffff", // unit
   BUILDING = "#45fcab", // unit
+
   DEVIAN = "#0ff0ff", // unit
   MOMO = "#9a2fa0", // unit
   KIMSON = "#a6ef0a", // unit
+  DAVID = "#6bacba", // unit
 }
 
 export const CONTROL = {
@@ -43,6 +46,10 @@ export const SIZE = {
   BLOCK: () => 5,
   UNIT: () => 3,
   SCALE: () => CONTROL.STATIC_SCALE * CONTROL.SCALE,
+  INVENTORY: {
+    X: 5,
+    Y: 7,
+  },
 };
 export const CAMERA = {
   X: () => innerWidth / 2 - (SIZE.UNIT() * SIZE.SCALE()) / 2,

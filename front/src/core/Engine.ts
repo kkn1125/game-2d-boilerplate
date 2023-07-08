@@ -13,8 +13,10 @@ export default class Engine {
   ui: UI;
   rayPointer: RayPointer;
   activeGuideLine: boolean = false;
+  options: EngineOption;
 
-  constructor() {
+  constructor(options: EngineOption) {
+    this.options = options;
     this.initUI();
     this.initRayPointer();
     this.initListener();
@@ -71,24 +73,28 @@ export default class Engine {
     if (this.map) {
       this.map.render();
     }
-    UNIT.BUILDING.forEach((building: Building) => {
-      building.render();
-      building.detectNearByPlayer();
-    });
-    UNIT.NPC.forEach((npc: NPC) => {
-      npc.render();
-      // console.log(npc)
-      npc.detectNearByPlayer();
-    });
-    master.units.forEach((unit) => {
-      unit.render();
-    });
-    if (this.activeGuideLine) {
+    this.options.render.building &&
+      UNIT.BUILDING.forEach((building: Building) => {
+        building.render();
+        building.detectNearByPlayer();
+      });
+    this.options.render.npc &&
+      UNIT.NPC.forEach((npc: NPC) => {
+        this.options.render.shadow && npc.renderShadow();
+        npc.render();
+        npc.detectNearByPlayer();
+      });
+    this.options.render.player &&
+      master.units.forEach((unit) => {
+        this.options.render.shadow && unit.renderShadow();
+        unit.render();
+      });
+    if (this.options.active.guideLine) {
       this.guideLine();
     }
-    if (master.me) {
-      master.me.renderMoney();
-    }
+    // if (master.me) {
+    //   master.me.renderMoney();
+    // }
     if (this.map) {
       const scale =
         innerWidth < 376
@@ -96,7 +102,8 @@ export default class Engine {
           : 376 < innerWidth && innerWidth < 568
           ? 0.06
           : 0.1;
-      this.map.drawMinimap(-200, -200, scale);
+      this.map.drawMinimap(-200, -200, scale, this.options.render);
+      this.map.drawMoney();
     }
     requestAnimationFrame(this.render.bind(this));
   }

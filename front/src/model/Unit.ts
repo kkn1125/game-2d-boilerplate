@@ -9,6 +9,7 @@ import {
   SIZE,
 } from "../util/global";
 import Inventory from "./Inventory";
+import Item from "./Item";
 
 export default class Unit {
   static id: number = 0;
@@ -49,22 +50,16 @@ export default class Unit {
   }
 
   goSpawn(x: number = 0, y: number = 0) {
-    // this.x = x + SIZE.BLOCK * SIZE.SCALE * 1;
-    // this.y = y + SIZE.BLOCK * SIZE.SCALE * 1;
-    // this.x = innerWidth / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
-    // this.y = innerHeight / 2 - (SIZE.UNIT * SIZE.SCALE) / 2;
     this.setPosition(25, 5);
   }
 
   move() {
     if (master.me?.id === this.id) {
       if (JOYSTICK["w"] || JOYSTICK["s"] || JOYSTICK["a"] || JOYSTICK["d"]) {
-        // this.velocity = 1;
         JOYSTICK["w"] && (this.y -= this.velocity);
         JOYSTICK["s"] && (this.y += this.velocity);
         JOYSTICK["a"] && (this.x -= this.velocity);
         JOYSTICK["d"] && (this.x += this.velocity);
-        // this.velocity = 0;
       }
     }
   }
@@ -83,6 +78,7 @@ export default class Unit {
     ctx.textAlign = "center";
     ctx.font = `bold ${16 * SIZE.SCALE() * 0.1}px sans-serif`;
 
+    /* text outline */
     ctx.lineWidth = 3;
     ctx.strokeStyle = "#000000";
     ctx.strokeText(
@@ -95,6 +91,7 @@ export default class Unit {
         : responsivePositionY - (SIZE.UNIT() * SIZE.SCALE()) / 2
     );
 
+    /* text */
     ctx.fillStyle = this.constructor.name === "NPC" ? this.color : COLOR.NAME;
     ctx.fillText(
       this.name.toUpperCase(),
@@ -118,12 +115,52 @@ export default class Unit {
     );
   }
 
-  renderMoney() {
-    ctx.textAlign = "right";
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = "#000000";
-    ctx.strokeText("💰" + this.money.toLocaleString("ko"), innerWidth - 20, 50);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText("💰" + this.money.toLocaleString("ko"), innerWidth - 20, 50);
+  renderShadow() {
+    const x = CAMERA.X();
+    const y = CAMERA.Y();
+    const shadowSize = 7;
+    const shadowOffsetX = 17;
+    const shadowOffsetY = 25;
+    const shadowSizeX = 5;
+    const shadowSizeY = 28;
+    // const shadowOffsetY = 30;
+
+    const responsivePositionX =
+      x + this.x * CONTROL.SCALE - (master.me?.x || 0) * CONTROL.SCALE;
+    const responsivePositionY =
+      y + this.y * CONTROL.SCALE - (master.me?.y || 0) * CONTROL.SCALE;
+
+    ctx.shadowBlur = 5;
+    ctx.shadowColor = "#000000";
+    ctx.fillStyle = "#00000056";
+    ctx.beginPath();
+    ctx.ellipse(
+      (master.me?.id === this.id ? x : responsivePositionX) +
+        (SIZE.UNIT() * SIZE.SCALE()) / 2 +
+        shadowOffsetX -
+        shadowSize,
+      (master.me?.id === this.id ? y : responsivePositionY) +
+        (SIZE.UNIT() * SIZE.SCALE()) / 2 +
+        shadowOffsetY -
+        shadowSize,
+      SIZE.UNIT() * SIZE.SCALE() - shadowSizeX - shadowSize,
+      SIZE.UNIT() * SIZE.SCALE() - shadowSizeY - shadowSize,
+      Math.PI * 0.95,
+      0,
+      2 * Math.PI
+    );
+    ctx.fill();
+    ctx.shadowBlur = 0;
   }
+
+  getItem(newItem: Item) {
+    for (let row of this.inventory.bag) {
+      const noneIndex = row.findIndex((cell) => cell.type === "none");
+      if (noneIndex > -1) {
+        row[noneIndex] = newItem;
+        break;
+      }
+    }
+  }
+  dropItem() {}
 }

@@ -1,5 +1,29 @@
 $chatting-float-size: calc(20px + 8vh);
 
+@mixin transition($second) {
+  transition: $second ease-in-out;
+  -webkit-transition: $second ease-in-out;
+  -moz-transition: $second ease-in-out;
+  -ms-transition: $second ease-in-out;
+  -o-transition: $second ease-in-out;
+}
+
+@mixin borderRadius($radius) {
+  border-radius: $radius;
+  -webkit-border-radius: $radius;
+  -moz-border-radius: $radius;
+  -ms-border-radius: $radius;
+  -o-border-radius: $radius;
+}
+
+@mixin centered($x, $y) {
+  transform: translate($x, $y);
+  -webkit-transform: translate($x, $y);
+  -moz-transform: translate($x, $y);
+  -ms-transform: translate($x, $y);
+  -o-transform: translate($x, $y);
+}
+
 html,
 body,
 #app {
@@ -7,6 +31,116 @@ body,
   height: 100%;
   overflow: hidden;
   background-color: rgb(48, 48, 48);
+}
+
+$inventory-cell-gap: 0.5rem;
+$inventory-cell-size: 45px;
+
+#inventory {
+  box-shadow: 0 0 0.5rem 0.5rem #00000026;
+  background-color: white;
+  position: fixed;
+  top: 50%;
+  left: 65%;
+  z-index: 10000000;
+
+  display: flex;
+  flex-direction: column;
+  gap: $inventory-cell-gap;
+  padding: 1rem;
+
+  #inventory-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    #inventory-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+    #inventory-exit-btn {
+      cursor: pointer;
+      font-size: 0.55rem;
+      border: none;
+      padding: 0.5rem;
+      background-color: #56565600;
+
+      @include borderRadius(999px);
+      @include transition(150ms);
+
+      &:hover {
+        background-color: #56565626;
+      }
+    }
+  }
+
+  @include borderRadius(0.5rem);
+  @include centered(-50%, -50%);
+
+  .row {
+    display: flex;
+    gap: $inventory-cell-gap;
+
+    .cell {
+      @include transition(150ms);
+      @include borderRadius(0.3rem);
+      user-select: none;
+
+      &.item {
+        font-size: 0.6rem;
+        white-space: nowrap;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      &.empty {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #56565626;
+
+        &::before {
+          content: "empty";
+          display: inline-block;
+          font-size: 0.5rem;
+          font-weight: 200;
+          color: #56565656;
+        }
+      }
+
+      &.lock {
+        background-color: #565656;
+      }
+
+      &:not(.lock):hover {
+        box-shadow: 0 0 0 0.3rem #371ef5a6;
+
+        // filter: brightness(0.85);
+        // -webkit-filter: brightness(0.85);
+      }
+
+      width: $inventory-cell-size;
+      height: $inventory-cell-size;
+      border: 1px solid #565656a6;
+
+      &.select {
+        background-color: #a993ff56;
+        box-shadow: 0 0 0 0.3rem #371ef5a6;
+      }
+    }
+  }
+  @keyframes open {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  animation: open 150ms ease-in-out both;
+  -webkit-animation: open 150ms ease-in-out both;
 }
 
 #joystick {
@@ -20,21 +154,13 @@ body,
   left: 5%;
   width: $scale * $joystick-size + px;
   height: $scale * $joystick-size + px;
-  border-radius: 99999px;
-  -webkit-border-radius: 99999px;
-  -moz-border-radius: 99999px;
-  -ms-border-radius: 99999px;
-  -o-border-radius: 99999px;
+  @include borderRadius(99999px);
 
   #ball {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
+    @include centered(-50%, -50%);
     background-color: #ffffffac;
 
     width: $scale * $ball-size + px;

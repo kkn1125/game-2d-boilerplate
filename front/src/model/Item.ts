@@ -1,5 +1,10 @@
+type ItemArguments = {
+  [key in keyof Item]?: any;
+};
+
 export default class Item {
   static idnumber = 0;
+
   id: number = 0;
   name: string = "";
   price: number = 0;
@@ -8,7 +13,9 @@ export default class Item {
   int: number = 0;
   luck: number = 0;
 
-  wearPlace: string = "hat";
+  type: ItemType = "none";
+
+  wearPlace: ItemWearPlaceType = "none";
 
   currentDurablility: number = 0;
   maxDurability: number = 10;
@@ -20,6 +27,12 @@ export default class Item {
 
   /* 인첸트 개발 중 */
   enchantment = null;
+
+  constructor(options: ItemArguments) {
+    Object.entries(options).forEach(([key, value]) => {
+      (this as any)[key] = value;
+    });
+  }
 
   getName() {
     return `+${this.enforce} ${this.name}`;

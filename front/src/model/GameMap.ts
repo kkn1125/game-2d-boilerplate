@@ -163,11 +163,13 @@ export default class GameMap {
     }
   }
 
-  drawMinimap(x: number, y: number, scale: number) {
-    this.minimap(x, y, scale);
-    this.miniMapBuilding(x, y, scale);
-    this.miniMapNPC(x, y, scale);
-    this.miniMapPlayer(x, y, scale);
+  drawMinimap(x: number, y: number, scale: number, options: RenderOption) {
+    if (options.minimap) {
+      this.minimap(x, y, scale);
+      options.building && this.miniMapBuilding(x, y, scale);
+      options.npc && this.miniMapNPC(x, y, scale);
+      options.player && this.miniMapPlayer(x, y, scale);
+    }
   }
 
   commonMap(
@@ -345,8 +347,8 @@ export default class GameMap {
     const binary = this.binary;
 
     if (x && y && scale) {
-      const padding = 2;
-      ctx.fillStyle = COLOR.WARN;
+      const padding = 5;
+      ctx.fillStyle = COLOR.WHITE;
       ctx.fillRect(
         playerViewX - padding,
         playerViewY - padding,
@@ -370,8 +372,19 @@ export default class GameMap {
       ctx.textAlign = "center";
       ctx.fillStyle = COLOR.BLACK;
       ctx.font = `bold ${36 * scale * 3}px sans-serif`;
+
+      /* text outline */
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = COLOR.WHITE;
+      ctx.strokeText(
+        user.name.toUpperCase(),
+        userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        userY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+      );
+
+      /* text */
       ctx.fillText(
-        user.name,
+        user.name.toUpperCase(),
         userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
         userY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
       );
@@ -397,8 +410,18 @@ export default class GameMap {
       ctx.textAlign = "center";
       ctx.fillStyle = COLOR.BLACK;
       ctx.font = `bold ${36 * scale * 3}px sans-serif`;
+
+      /* text outline */
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = COLOR.WHITE;
+      ctx.strokeText(
+        npc.name.toUpperCase(),
+        npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        npcY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+      );
+
       ctx.fillText(
-        npc.name,
+        npc.name.toUpperCase(),
         npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
         npcY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
       );
@@ -450,5 +473,27 @@ export default class GameMap {
     const binary = this.binary;
 
     this.commonMap(blockSize, playerViewX, playerViewY, binary, 1);
+  }
+
+  drawMoney() {
+    if (master.me) {
+      ctx.font = `bold ${
+        ((16 * SIZE.SCALE()) / CONTROL.SCALE) * 0.1
+      }px sans-serif`;
+      ctx.textAlign = "right";
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "#000000";
+      ctx.strokeText(
+        "💰" + master.me.money.toLocaleString("ko"),
+        innerWidth - 20,
+        50
+      );
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(
+        "💰" + master.me.money.toLocaleString("ko"),
+        innerWidth - 20,
+        50
+      );
+    }
   }
 }
