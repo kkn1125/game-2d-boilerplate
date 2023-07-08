@@ -31,6 +31,37 @@ body,
   height: 100%;
   overflow: hidden;
   background-color: rgb(48, 48, 48);
+
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  @keyframes slide {
+    0% {
+      opacity: 0;
+      width: 0%;
+    }
+    100% {
+      opacity: 1;
+      width: 100%;
+    }
+  }
+
+  a {
+    &::before {
+      content: "🔗";
+    }
+    position: relative;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    background-color: #565656;
+    color: #ffffff;
+    padding: 0.3rem;
+    @include borderRadius(0.5rem);
+  }
 }
 
 $inventory-cell-gap: 0.5rem;

@@ -22,6 +22,7 @@ export default class Unit {
   velocity: number = master.velocity;
   money: number = 0;
   inventory: Inventory = new Inventory();
+  locate: string = "home";
 
   constructor(name: string);
   constructor(id: number, name: string);
@@ -40,6 +41,11 @@ export default class Unit {
     this.goSpawn();
   }
 
+  setLocate(locate: string) {
+    this.locate = locate;
+    this.goSpawn();
+  }
+
   setPosition(x: number, y: number) {
     this.x = (x + MAP_PADDING) * SIZE.BLOCK() * SIZE.SCALE();
     this.y = (y + MAP_PADDING) * SIZE.BLOCK() * SIZE.SCALE();
@@ -50,7 +56,8 @@ export default class Unit {
   }
 
   goSpawn(x: number = 0, y: number = 0) {
-    this.setPosition(25, 5);
+    if (this.locate === "home") this.setPosition(x || 25, y || 5);
+    if (this.locate === "bcenter") this.setPosition(x || 5, y || 5);
   }
 
   move() {
@@ -80,7 +87,8 @@ export default class Unit {
 
     /* text outline */
     ctx.lineWidth = 3;
-    ctx.strokeStyle = "#000000";
+    ctx.strokeStyle =
+      this.constructor.name === "Portal" ? "#00000000" : "#000000";
     ctx.strokeText(
       this.name.toUpperCase(),
       master.me?.id === this.id
@@ -92,7 +100,12 @@ export default class Unit {
     );
 
     /* text */
-    ctx.fillStyle = this.constructor.name === "NPC" ? this.color : COLOR.NAME;
+    ctx.fillStyle =
+      this.constructor.name === "NPC"
+        ? this.color
+        : this.constructor.name === "Portal"
+        ? COLOR.PORTAL + "00"
+        : COLOR.NAME;
     ctx.fillText(
       this.name.toUpperCase(),
       master.me?.id === this.id

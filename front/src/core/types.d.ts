@@ -5,7 +5,13 @@ declare type Joystick = {
 };
 
 declare type RenderOption = {
-  [key in "minimap" | "player" | "npc" | "building" | "shadow"]: boolean;
+  [key in
+    | "minimap"
+    | "player"
+    | "npc"
+    | "building"
+    | "shadow"
+    | "portal"]: boolean;
 };
 
 declare interface EngineOption {

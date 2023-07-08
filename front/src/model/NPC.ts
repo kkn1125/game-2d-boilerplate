@@ -22,9 +22,17 @@ export default class NPC extends Unit {
   flag: "up" | "down" = "up";
   bound: number = 10;
   startBound: number = 0;
+  eventList: {
+    [key: string]: Function[];
+  } = {};
 
   initUI(ui: UI) {
     this.ui = ui;
+  }
+
+  addEventListener(type: string, fn: Function) {
+    if (!this.eventList[type]) this.eventList[type] = [];
+    this.eventList[type].push(fn);
   }
 
   addStaticMessage(message: string) {
@@ -46,6 +54,7 @@ export default class NPC extends Unit {
     if (message) {
       this.ui.openModal(this.id, this.name, message.message);
     } else {
+      this.eventList?.["messageend"]?.forEach?.((fn) => fn());
       UI.clearChatModals();
       this.talkExit();
     }
@@ -73,7 +82,8 @@ export default class NPC extends Unit {
         leftSide < playerX &&
         playerX < rightSide &&
         topSide < playerY &&
-        playerY < bottomSide
+        playerY < bottomSide &&
+        player.locate === this.locate
       ) {
         this.nearBy = true;
         this.onHello();

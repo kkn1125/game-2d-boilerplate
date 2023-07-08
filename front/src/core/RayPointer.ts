@@ -1,3 +1,4 @@
+import Portal from "../model/Portal";
 import Unit from "../model/Unit";
 import { CAMERA, CONTROL, master, SIZE, UNIT } from "../util/global";
 
@@ -11,6 +12,7 @@ export default class RayPointer {
   }
 
   selector: Unit[] = [];
+  pSelector: Portal[] = [];
 
   handleDetectObject(e: MouseEvent) {
     if (!master.me) return;
@@ -50,10 +52,27 @@ export default class RayPointer {
       }
       return false;
     });
+    const portal = Array.from(master.portals.values()).find((portal) => {
+      const portalX = portal.x;
+      const portalY = portal.y;
+      const inHorizontal =
+        portalX <= xPosition && xPosition <= portalX + unitSize;
+      const inVertical =
+        portalY <= yPosition && yPosition <= portalY + unitSize;
+      if (inHorizontal && inVertical && portal.nearBy) {
+        return true;
+      }
+      return false;
+    });
     if (npc && !this.selector[0]) {
       this.selector[0] = npc;
     } else if (!npc) {
       this.selector = [];
+    }
+    if (portal && !this.pSelector[0]) {
+      this.pSelector[0] = portal;
+    } else if (!portal) {
+      this.pSelector = [];
     }
   }
 }

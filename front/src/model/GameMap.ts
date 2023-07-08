@@ -1,26 +1,38 @@
 import MapList from "../option/MapList";
 import {
+  bgCanvas,
   CAMERA,
   COLOR,
   CONTROL,
-  ctx,
   FIELD_VALUE,
   MAP_PADDING,
   master,
   SIZE,
   TEXTURE,
+  uiCanvas,
   UNIT,
 } from "../util/global";
 import { setPaddingToArray } from "../util/tool";
 
 export default class GameMap {
+  name: string = "";
   binary: number[][];
-  constructor(mapBinary: string = "") {
+  bgCanvas: HTMLCanvasElement = bgCanvas;
+  uiCanvas: HTMLCanvasElement = uiCanvas;
+  bgCtx: CanvasRenderingContext2D = this.bgCanvas.getContext(
+    "2d"
+  ) as CanvasRenderingContext2D;
+  uiCtx: CanvasRenderingContext2D = this.uiCanvas.getContext(
+    "2d"
+  ) as CanvasRenderingContext2D;
+
+  constructor(name: string, mapBinary: string = "", paddingType: number = 3) {
     const map = mapBinary || MapList.home;
-    this.binary = this.convertToMap(map);
+    this.name = name;
+    this.binary = this.convertToMap(map, paddingType);
   }
 
-  convertToMap(str: string) {
+  convertToMap(str: string, paddingType: number) {
     return setPaddingToArray(
       str
         .trim()
@@ -31,14 +43,19 @@ export default class GameMap {
             .split("")
             .map((column) => Number(column))
         ),
-      3,
+      paddingType,
       MAP_PADDING
     );
   }
 
   render() {
-    this.collision();
     this.drawMap();
+    this.collision();
+  }
+
+  clear() {
+    this.bgCtx.clearRect(0, 0, innerWidth, innerHeight);
+    this.uiCtx.clearRect(0, 0, innerWidth, innerHeight);
   }
 
   collision() {
@@ -167,6 +184,7 @@ export default class GameMap {
     if (options.minimap) {
       this.minimap(x, y, scale);
       options.building && this.miniMapBuilding(x, y, scale);
+      options.portal && this.miniMapPortal(x, y, scale);
       options.npc && this.miniMapNPC(x, y, scale);
       options.player && this.miniMapPlayer(x, y, scale);
     }
@@ -177,11 +195,13 @@ export default class GameMap {
     playerViewX: number,
     playerViewY: number,
     binary: number[][],
-    scale: number
+    scale: number,
+    isBg: boolean
   ) {
+    const masterCtx = isBg ? this.bgCtx : this.uiCtx;
     const renderBlock = (x: number, y: number, field: number) => {
-      ctx.fillStyle = COLOR.BLOCK;
-      ctx.fillRect(
+      masterCtx.fillStyle = COLOR.BLOCK;
+      masterCtx.fillRect(
         x * blockSize + playerViewX,
         y * blockSize + playerViewY,
         blockSize,
@@ -189,7 +209,7 @@ export default class GameMap {
       );
     };
     const renderGrass = (x: number, y: number, field: number) => {
-      ctx.drawImage(
+      masterCtx.drawImage(
         TEXTURE[FIELD_VALUE["grass"]],
         0,
         0,
@@ -203,14 +223,14 @@ export default class GameMap {
     };
 
     const renderRoad = (x: number, y: number, field: number) => {
-      // ctx.fillStyle = COLOR.ROAD;
-      // ctx.fillRect(
+      // masterCtx.fillStyle = COLOR.ROAD;
+      // masterCtx.fillRect(
       //   columnMirror * blockSize + playerViewX,
       //   rowMirror * blockSize + playerViewY,
       //   blockSize,
       //   blockSize
       // );
-      ctx.drawImage(
+      masterCtx.drawImage(
         TEXTURE[field],
         x * blockSize + playerViewX,
         y * blockSize + playerViewY,
@@ -220,14 +240,14 @@ export default class GameMap {
     };
 
     const renderWater = (x: number, y: number, field: number) => {
-      // ctx.fillStyle = COLOR.ROAD;
-      // ctx.fillRect(
+      // masterCtx.fillStyle = COLOR.ROAD;
+      // masterCtx.fillRect(
       //   columnMirror * blockSize + playerViewX,
       //   rowMirror * blockSize + playerViewY,
       //   blockSize,
       //   blockSize
       // );
-      ctx.drawImage(
+      masterCtx.drawImage(
         TEXTURE[field],
         x * blockSize + playerViewX,
         y * blockSize + playerViewY,
@@ -348,8 +368,8 @@ export default class GameMap {
 
     if (x && y && scale) {
       const padding = 5;
-      ctx.fillStyle = COLOR.WHITE;
-      ctx.fillRect(
+      this.uiCtx.fillStyle = COLOR.WHITE;
+      this.uiCtx.fillRect(
         playerViewX - padding,
         playerViewY - padding,
         this.binary[0].length * blockSize + padding * 2,
@@ -357,110 +377,155 @@ export default class GameMap {
       );
     }
 
-    this.commonMap(blockSize, playerViewX, playerViewY, binary, scale);
+    this.commonMap(blockSize, playerViewX, playerViewY, binary, scale, false);
   }
 
   miniMapPlayer(x: number, y: number, scale: number) {
     master.units.forEach((user) => {
-      const userX = user.x * scale;
-      const userY = user.y * scale;
-      const unitSize =
-        (SIZE.UNIT() * SIZE.SCALE()) /
-        (CONTROL.STATIC_SCALE / 10) /
-        CONTROL.SCALE;
+      if (user.locate === this.name) {
+        const userX = user.x * scale;
+        const userY = user.y * scale;
+        const unitSize =
+          (SIZE.UNIT() * SIZE.SCALE()) /
+          (CONTROL.STATIC_SCALE / 10) /
+          CONTROL.SCALE;
 
-      ctx.textAlign = "center";
-      ctx.fillStyle = COLOR.BLACK;
-      ctx.font = `bold ${36 * scale * 3}px sans-serif`;
+        this.uiCtx.textAlign = "center";
+        this.uiCtx.fillStyle = COLOR.BLACK;
+        this.uiCtx.font = `bold ${36 * scale * 3}px sans-serif`;
 
-      /* text outline */
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = COLOR.WHITE;
-      ctx.strokeText(
-        user.name.toUpperCase(),
-        userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        userY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
-      );
+        /* text outline */
+        this.uiCtx.lineWidth = 2;
+        this.uiCtx.strokeStyle = COLOR.WHITE;
+        this.uiCtx.strokeText(
+          user.name.toUpperCase(),
+          userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          userY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        );
 
-      /* text */
-      ctx.fillText(
-        user.name.toUpperCase(),
-        userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        userY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
-      );
-      ctx.fillStyle = COLOR.UNIT;
-      ctx.fillRect(
-        userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        userY / (CONTROL.STATIC_SCALE / 10) - y * scale,
-        unitSize * scale,
-        unitSize * scale
-      );
+        /* text */
+        this.uiCtx.fillText(
+          user.name.toUpperCase(),
+          userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          userY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        );
+        this.uiCtx.fillStyle = COLOR.UNIT;
+        this.uiCtx.fillRect(
+          userX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          userY / (CONTROL.STATIC_SCALE / 10) - y * scale,
+          unitSize * scale,
+          unitSize * scale
+        );
+      }
+    });
+  }
+
+  miniMapPortal(x: number, y: number, scale: number) {
+    master.portals.forEach((portal) => {
+      if (portal.locate === this.name) {
+        const portalX = portal.x * scale;
+        const portalY = portal.y * scale;
+        const unitSize =
+          (SIZE.UNIT() * SIZE.SCALE()) /
+          (CONTROL.STATIC_SCALE / 10) /
+          CONTROL.SCALE;
+
+        // this.uiCtx.textAlign = "center";
+        // this.uiCtx.fillStyle = COLOR.BLACK;
+        // this.uiCtx.font = `bold ${36 * scale * 3}px sans-serif`;
+
+        // /* text outline */
+        // this.uiCtx.lineWidth = 2;
+        // this.uiCtx.strokeStyle = COLOR.WHITE;
+        // this.uiCtx.strokeText(
+        //   portal.name.toUpperCase(),
+        //   portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        //   portalY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        // );
+
+        // this.uiCtx.fillText(
+        //   portal.name.toUpperCase(),
+        //   portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+        //   portalY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        // );
+        this.uiCtx.fillStyle = COLOR.PORTAL;
+        this.uiCtx.fillRect(
+          portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          portalY / (CONTROL.STATIC_SCALE / 10) - y * scale,
+          unitSize * scale,
+          unitSize * scale
+        );
+      }
     });
   }
 
   miniMapNPC(x: number, y: number, scale: number) {
     UNIT.NPC.forEach((npc) => {
-      const npcX = npc.x * scale;
-      const npcY = npc.y * scale;
-      const unitSize =
-        (SIZE.UNIT() * SIZE.SCALE()) /
-        (CONTROL.STATIC_SCALE / 10) /
-        CONTROL.SCALE;
+      if (npc.locate === this.name) {
+        const npcX = npc.x * scale;
+        const npcY = npc.y * scale;
+        const unitSize =
+          (SIZE.UNIT() * SIZE.SCALE()) /
+          (CONTROL.STATIC_SCALE / 10) /
+          CONTROL.SCALE;
 
-      ctx.textAlign = "center";
-      ctx.fillStyle = COLOR.BLACK;
-      ctx.font = `bold ${36 * scale * 3}px sans-serif`;
+        this.uiCtx.textAlign = "center";
+        this.uiCtx.fillStyle = COLOR.BLACK;
+        this.uiCtx.font = `bold ${36 * scale * 3}px sans-serif`;
 
-      /* text outline */
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = COLOR.WHITE;
-      ctx.strokeText(
-        npc.name.toUpperCase(),
-        npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        npcY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
-      );
+        /* text outline */
+        this.uiCtx.lineWidth = 2;
+        this.uiCtx.strokeStyle = COLOR.WHITE;
+        this.uiCtx.strokeText(
+          npc.name.toUpperCase(),
+          npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          npcY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        );
 
-      ctx.fillText(
-        npc.name.toUpperCase(),
-        npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        npcY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
-      );
-      ctx.fillStyle = COLOR.NPC;
-      ctx.fillRect(
-        npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        npcY / (CONTROL.STATIC_SCALE / 10) - y * scale,
-        unitSize * scale,
-        unitSize * scale
-      );
+        this.uiCtx.fillText(
+          npc.name.toUpperCase(),
+          npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          npcY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        );
+        this.uiCtx.fillStyle = COLOR.NPC;
+        this.uiCtx.fillRect(
+          npcX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          npcY / (CONTROL.STATIC_SCALE / 10) - y * scale,
+          unitSize * scale,
+          unitSize * scale
+        );
+      }
     });
   }
 
   miniMapBuilding(x: number, y: number, scale: number) {
     UNIT.BUILDING.forEach((building) => {
-      const buildingX = building.x * scale;
-      const buildingY = building.y * scale;
-      const unitSize = (SIZE.UNIT() * SIZE.SCALE()) / CONTROL.SCALE;
+      if (building.locate === this.name) {
+        const buildingX = building.x * scale;
+        const buildingY = building.y * scale;
+        const unitSize = (SIZE.UNIT() * SIZE.SCALE()) / CONTROL.SCALE;
 
-      ctx.textAlign = "center";
-      ctx.fillStyle = COLOR.BLACK;
-      ctx.font = `bold ${36 * scale * 3}px sans-serif`;
-      ctx.fillText(
-        building.name,
-        buildingX / (CONTROL.STATIC_SCALE / 10) +
-          building.width / 2 -
-          x * scale,
-        buildingY / (CONTROL.STATIC_SCALE / 10) +
-          building.height -
-          y * scale -
-          2
-      );
-      ctx.fillStyle = COLOR.BUILDING;
-      ctx.fillRect(
-        buildingX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        buildingY / (CONTROL.STATIC_SCALE / 10) - y * scale,
-        building.width,
-        building.height
-      );
+        this.uiCtx.textAlign = "center";
+        this.uiCtx.fillStyle = COLOR.BLACK;
+        this.uiCtx.font = `bold ${36 * scale * 3}px sans-serif`;
+        this.uiCtx.fillText(
+          building.name,
+          buildingX / (CONTROL.STATIC_SCALE / 10) +
+            building.width / 2 -
+            x * scale,
+          buildingY / (CONTROL.STATIC_SCALE / 10) +
+            building.height -
+            y * scale -
+            2
+        );
+        this.uiCtx.fillStyle = COLOR.BUILDING;
+        this.uiCtx.fillRect(
+          buildingX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          buildingY / (CONTROL.STATIC_SCALE / 10) - y * scale,
+          building.width,
+          building.height
+        );
+      }
     });
   }
 
@@ -472,24 +537,24 @@ export default class GameMap {
 
     const binary = this.binary;
 
-    this.commonMap(blockSize, playerViewX, playerViewY, binary, 1);
+    this.commonMap(blockSize, playerViewX, playerViewY, binary, 1, true);
   }
 
   drawMoney() {
     if (master.me) {
-      ctx.font = `bold ${
+      this.uiCtx.font = `bold ${
         ((16 * SIZE.SCALE()) / CONTROL.SCALE) * 0.1
       }px sans-serif`;
-      ctx.textAlign = "right";
-      ctx.lineWidth = 3;
-      ctx.strokeStyle = "#000000";
-      ctx.strokeText(
+      this.uiCtx.textAlign = "right";
+      this.uiCtx.lineWidth = 3;
+      this.uiCtx.strokeStyle = "#000000";
+      this.uiCtx.strokeText(
         "💰" + master.me.money.toLocaleString("ko"),
         innerWidth - 20,
         50
       );
-      ctx.fillStyle = "#ffffff";
-      ctx.fillText(
+      this.uiCtx.fillStyle = "#ffffff";
+      this.uiCtx.fillText(
         "💰" + master.me.money.toLocaleString("ko"),
         innerWidth - 20,
         50

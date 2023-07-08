@@ -1,6 +1,17 @@
 import NPC from "../model/NPC";
+import Portal from "../model/Portal";
 import UI from "../model/UI";
-import { canvas, CONTROL, JOYSTICK, master, SIZE, UNIT } from "../util/global";
+import {
+  canvas,
+  CONTROL,
+  JOYSTICK,
+  bgCanvas,
+  master,
+  SIZE,
+  UNIT,
+  uiCanvas,
+  effectCanvas,
+} from "../util/global";
 import RayPointer from "./RayPointer";
 
 let beforeX = 0;
@@ -107,14 +118,75 @@ export default class EventListener {
   handleJoyStickDown(e: KeyboardEvent) {
     const key = e.key as KeySet;
     if ((key as OtherKeySet) === " ") {
-      UNIT.NPC.forEach((npc) => {
-        if (npc.nearBy && npc.chatQueue.temp.length === 0) {
-          npc.talk();
-          if (master.me) master.me.velocity = 0;
-        } else if (npc.nearBy && npc.chatQueue.temp.length > 0) {
-          npc.talk();
-        }
-      });
+      const u = Array.from(UNIT.NPC.values()).find(
+        (npc) => npc.nearBy && master.me?.locate === npc.locate
+      );
+      const p = Array.from(master.portals.values()).find(
+        (portal) => portal.nearBy && master.me?.locate === portal.locate
+      );
+      const isTalkingU = Array.from(UNIT.NPC.values()).find(
+        (npc) =>
+          npc.nearBy &&
+          master.me?.locate === npc.locate &&
+          npc.chatQueue.temp.length > 0
+      );
+      const isTalkingP = Array.from(master.portals.values()).find(
+        (portal) =>
+          portal.nearBy &&
+          master.me?.locate === portal.locate &&
+          portal.chatQueue.temp.length > 0
+      );
+      if (isTalkingU && !isTalkingP) {
+        isTalkingU.talk();
+        return;
+      } else if (!isTalkingU && isTalkingP) {
+        isTalkingP.talk();
+        return;
+      }
+      let moreThanP = null;
+      const muX = Math.abs((master.me?.x || 0) - (u?.x || 0));
+      const muY = Math.abs((master.me?.y || 0) - (u?.y || 0));
+      const mpX = Math.abs((master.me?.x || 0) - (p?.x || 0));
+      const mpY = Math.abs((master.me?.y || 0) - (p?.y || 0));
+      const uDist = Math.sqrt(muX ** 2 + muY ** 2);
+      const pDist = Math.sqrt(mpX ** 2 + mpY ** 2);
+      moreThanP = uDist > pDist;
+
+      if (moreThanP === false) {
+        UNIT.NPC.forEach((npc) => {
+          if (
+            master.me?.locate === npc.locate &&
+            npc.nearBy &&
+            npc.chatQueue.temp.length === 0
+          ) {
+            npc.talk();
+            if (master.me) master.me.velocity = 0;
+          } else if (
+            master.me?.locate === npc.locate &&
+            npc.nearBy &&
+            npc.chatQueue.temp.length > 0
+          ) {
+            npc.talk();
+          }
+        });
+      } else if (moreThanP === true || moreThanP === null) {
+        master.portals.forEach((portal) => {
+          if (
+            master.me?.locate === portal.locate &&
+            portal.nearBy &&
+            portal.chatQueue.temp.length === 0
+          ) {
+            portal.talk();
+            if (master.me) master.me.velocity = 0;
+          } else if (
+            master.me?.locate === portal.locate &&
+            portal.nearBy &&
+            portal.chatQueue.temp.length > 0
+          ) {
+            portal.talk();
+          }
+        });
+      }
     }
     if ((key as OtherKeySet) === "i") {
       if (master.me) {
@@ -129,6 +201,12 @@ export default class EventListener {
       UNIT.NPC.forEach((npc) => {
         if (npc.nearBy && npc.chatQueue.temp.length > 0) {
           npc.talkExit();
+        }
+      });
+
+      master.portals.forEach((portal) => {
+        if (portal.nearBy && portal.chatQueue.temp.length > 0) {
+          portal.talkExit();
         }
       });
 
@@ -515,6 +593,12 @@ export default class EventListener {
   canvasSize() {
     canvas.width = innerWidth;
     canvas.height = innerHeight;
+    bgCanvas.width = innerWidth;
+    bgCanvas.height = innerHeight;
+    uiCanvas.width = innerWidth;
+    uiCanvas.height = innerHeight;
+    effectCanvas.width = innerWidth;
+    effectCanvas.height = innerHeight;
   }
 
   handleResizeCanvas() {
@@ -526,6 +610,11 @@ export default class EventListener {
     const npc = this.rayPointer.selector?.[0] as NPC;
     if (npc && npc.nearBy && npc.chatQueue.temp.length === 0) {
       npc.talk();
+      if (master.me) master.me.velocity = 0;
+    }
+    const portal = this.rayPointer.pSelector?.[0] as Portal;
+    if (portal && portal.nearBy && portal.chatQueue.temp.length === 0) {
+      portal.talk();
       if (master.me) master.me.velocity = 0;
     }
   }

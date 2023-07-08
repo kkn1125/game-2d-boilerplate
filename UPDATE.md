@@ -1,5 +1,16 @@
 # 업데이트 내역
 
+- v0.0.7
+  - 추가
+    - 신규 맵 Building Center 추가
+  - 수정
+    - 포탈 객체 추가 및 맵 이동 기능 구현
+    - 화면 효과 위한 Effertor 객체 추가
+    - 화면 페이드 인/아웃 효과 생성 및 적용 테스트 완료
+    - 신규 NPC David center 맵으로 이동
+    - NPC/Portal을 이용한 맵이동 테스트 완료
+    - GM Kimson NPC 외 모든 NPC 대화 수정 및 추가
+    - GM KImson NPC 대화 마지막 메세지에 포폴 및 깃허브 링크 추가
 - v0.0.6
   - 수정
     - 신규 NPC David 추가

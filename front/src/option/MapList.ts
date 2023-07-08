@@ -1,4 +1,4 @@
-import home from "./map/home";
+import home from "./map/source/home";
 
 /* 
 

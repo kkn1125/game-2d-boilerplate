@@ -1,6 +1,7 @@
 import Building from "../model/Building";
 import GameMap from "../model/GameMap";
 import NPC from "../model/NPC";
+import Portal from "../model/Portal";
 import UI from "../model/UI";
 import Unit from "../model/Unit";
 import { COLOR, ctx, master, UNIT } from "../util/global";
@@ -20,7 +21,6 @@ export default class Engine {
     this.initUI();
     this.initRayPointer();
     this.initListener();
-    this.initMap();
     this.render.call(this);
   }
 
@@ -28,11 +28,6 @@ export default class Engine {
     this.eventListener = new EventListener();
     this.eventListener.initUI(this.ui);
     this.eventListener.initRayPointer(this.rayPointer);
-  }
-
-  initMap() {
-    const map = new GameMap();
-    this.map = map;
   }
 
   initUI() {
@@ -43,6 +38,17 @@ export default class Engine {
   initRayPointer() {
     const rayPointer = new RayPointer();
     this.rayPointer = rayPointer;
+  }
+
+  changeMap(map: GameMap) {
+    this.map = map;
+  }
+
+  addPortal(...portals: Portal[]) {
+    for (let unit of portals) {
+      unit.initUI(this.ui);
+      master.portals.set(unit.id, unit);
+    }
   }
 
   addPlayer(...units: Unit[]) {
@@ -71,18 +77,28 @@ export default class Engine {
   render(time?: number) {
     this.clearCanvas();
     if (this.map) {
+      this.map.clear();
       this.map.render();
+      // this.map.collision();
     }
     this.options.render.building &&
       UNIT.BUILDING.forEach((building: Building) => {
         building.render();
         building.detectNearByPlayer();
       });
+    this.options.render.portal &&
+      master.portals.forEach((portal: Portal) => {
+        portal.render();
+        portal.detectNearByPlayer();
+      });
     this.options.render.npc &&
       UNIT.NPC.forEach((npc: NPC) => {
-        this.options.render.shadow && npc.renderShadow();
-        npc.render();
-        npc.detectNearByPlayer();
+        // console.log(this.map.name)
+        if (npc.locate === this.map.name) {
+          this.options.render.shadow && npc.renderShadow();
+          npc.render();
+          npc.detectNearByPlayer();
+        }
       });
     this.options.render.player &&
       master.units.forEach((unit) => {

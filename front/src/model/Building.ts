@@ -19,6 +19,8 @@ export default class Building {
   state: string = "hold";
   color: COLOR = COLOR.BUILDING;
 
+  locate: string = "home";
+
   hello: boolean = false;
   nearBy: boolean = false;
 
@@ -39,6 +41,11 @@ export default class Building {
     this.goSpawn();
   }
 
+  setLocate(locate: string) {
+    this.locate = locate;
+    this.goSpawn();
+  }
+
   setPosition(x: number, y: number) {
     this.x = (x + MAP_PADDING) * SIZE.BLOCK() * SIZE.SCALE();
     this.y = (y + MAP_PADDING) * SIZE.BLOCK() * SIZE.SCALE();
@@ -48,8 +55,9 @@ export default class Building {
     this.color = color;
   }
 
-  goSpawn(x: number = 25, y: number = 5) {
-    this.setPosition(x, y);
+  goSpawn(x: number = 0, y: number = 0) {
+    if (this.locate === "home") this.setPosition(x || 25, y || 5);
+    if (this.locate === "bcenter") this.setPosition(x || 5, y || 5);
   }
 
   render() {

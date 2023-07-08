@@ -50,9 +50,19 @@ export default class UI {
             npc.talk();
           }
         });
+        master.portals.forEach((npc) => {
+          if (npc.id === id) {
+            npc.talk();
+          }
+        });
       } else if (target === exitBtn) {
         modal.remove();
         UNIT.NPC.forEach((npc) => {
+          if (npc.id === id) {
+            npc.talkExit();
+          }
+        });
+        master.portals.forEach((npc) => {
           if (npc.id === id) {
             npc.talkExit();
           }

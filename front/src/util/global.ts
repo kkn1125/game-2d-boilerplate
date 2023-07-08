@@ -11,6 +11,7 @@ import NPC from "../model/NPC";
 import Unit from "../model/Unit";
 import User from "../model/User";
 import Building from "../model/Building";
+import Portal from "../model/Portal";
 
 export enum COLOR {
   BLACK = "#000000", // block
@@ -23,7 +24,7 @@ export enum COLOR {
   NAME = "#ffffff", // unit
   BUILDING_NAME = "#ffffff", // unit
   BUILDING = "#45fcab", // unit
-
+  PORTAL = "#12acc6", // unit
   DEVIAN = "#0ff0ff", // unit
   MOMO = "#9a2fa0", // unit
   KIMSON = "#a6ef0a", // unit
@@ -59,10 +60,12 @@ export const CAMERA = {
 export const master: {
   me: User | null;
   units: Map<number, Unit>;
+  portals: Map<number, Portal>;
   velocity: number;
 } = {
   me: null,
   units: new Map<number, Unit>(),
+  portals: new Map<number, Portal>(),
   velocity: 30 * (SIZE.SCALE() / 100),
 };
 export const JOYSTICK = {
@@ -79,9 +82,14 @@ export const UNIT = {
 
 export const APP = () => document.getElementById("app") as HTMLDivElement;
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;
+export const bgCanvas = document.createElement("canvas") as HTMLCanvasElement;
+export const uiCanvas = document.createElement("canvas") as HTMLCanvasElement;
+export const effectCanvas = document.createElement(
+  "canvas"
+) as HTMLCanvasElement;
 export const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-APP().append(canvas);
+APP().append(bgCanvas, canvas, uiCanvas, effectCanvas);
 
 export enum FIELD_VALUE {
   block = 0,
