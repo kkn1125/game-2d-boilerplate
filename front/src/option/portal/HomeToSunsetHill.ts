@@ -9,7 +9,9 @@ const HomeToSunsetHill = new Portal("sunset hill");
 HomeToSunsetHill.setLocate("home");
 HomeToSunsetHill.setPosition(5.7, -0.55);
 
-HomeToSunsetHill.addStaticMessage("해가지는 언덕1로 진입하시겠습니까?");
+HomeToSunsetHill.addStaticMessage(
+  "<strong>해가 지는 언덕1</strong>로 진입하시겠습니까?"
+);
 
 HomeToSunsetHill.color = COLOR.PORTAL;
 HomeToSunsetHill.setDestination("fsunsethill");
