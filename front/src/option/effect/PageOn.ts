@@ -1,6 +1,6 @@
 import Effector from "../../model/Effector";
 
-const PageOn = new Effector();
+const PageOn = new Effector(true);
 PageOn.setEffect((process: number | false) => {
   if (process !== false) {
     const toHex = 255 - Math.floor((process * 255) / 100);

@@ -176,8 +176,8 @@ $inventory-cell-size: 45px;
 
 #joystick {
   $scale: 5;
-  $ball-size: 8;
-  $joystick-size: 20;
+  $ball-size: 15;
+  $joystick-size: 30;
   background-color: #ffffff56;
   border: 3px solid #ffffff9c;
   position: absolute;
@@ -206,6 +206,7 @@ $inventory-cell-size: 45px;
 }
 
 .chat-modal {
+  user-select: none;
   &.modal {
     position: fixed;
     bottom: $chatting-float-size;
@@ -237,7 +238,7 @@ $inventory-cell-size: 45px;
     font-size: 1.6rem;
     text-transform: uppercase;
     &::before {
-      content: "[NPC]";
+      content: "[" attr(data-type) "]";
       margin-right: 1rem;
       color: #5441ff;
     }

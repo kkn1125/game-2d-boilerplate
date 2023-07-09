@@ -1,9 +1,12 @@
 import Building from "../model/Building";
+import Effector from "../model/Effector";
 import GameMap from "../model/GameMap";
 import NPC from "../model/NPC";
 import Portal from "../model/Portal";
 import UI from "../model/UI";
 import Unit from "../model/Unit";
+import PageOff from "../option/effect/PageOff";
+import PageOn from "../option/effect/PageOn";
 import { COLOR, ctx, master, UNIT } from "../util/global";
 import EventListener from "./EventListener";
 import RayPointer from "./RayPointer";
@@ -13,6 +16,7 @@ export default class Engine {
   eventListener: EventListener;
   ui: UI;
   rayPointer: RayPointer;
+  effectors: Effector[] = [];
   activeGuideLine: boolean = false;
   options: EngineOption;
 
@@ -20,6 +24,7 @@ export default class Engine {
     this.options = options;
     this.initUI();
     this.initRayPointer();
+    this.initEffectors();
     this.initListener();
     this.render.call(this);
   }
@@ -27,6 +32,7 @@ export default class Engine {
   initListener() {
     this.eventListener = new EventListener();
     this.eventListener.initUI(this.ui);
+    this.eventListener.initEffectors(this.effectors);
     this.eventListener.initRayPointer(this.rayPointer);
   }
 
@@ -40,6 +46,10 @@ export default class Engine {
     this.rayPointer = rayPointer;
   }
 
+  initEffectors() {
+    this.effectors.push(PageOff, PageOn);
+  }
+
   changeMap(map: GameMap) {
     this.map = map;
   }
@@ -47,6 +57,7 @@ export default class Engine {
   addPortal(...portals: Portal[]) {
     for (let unit of portals) {
       unit.initUI(this.ui);
+      unit.initEngine(this);
       master.portals.set(unit.id, unit);
     }
   }
@@ -60,6 +71,7 @@ export default class Engine {
   addNpc(...units: NPC[]) {
     for (let unit of units) {
       unit.initUI(this.ui);
+      unit.initEngine(this);
       UNIT.NPC.set(unit.id, unit);
     }
   }
@@ -67,6 +79,7 @@ export default class Engine {
   addBuilding(...units: Building[]) {
     for (let unit of units) {
       UNIT.BUILDING.set(unit.id, unit);
+      unit.initEngine(this);
     }
   }
 
@@ -81,15 +94,21 @@ export default class Engine {
       this.map.render();
       // this.map.collision();
     }
-    this.options.render.building &&
-      UNIT.BUILDING.forEach((building: Building) => {
-        building.render();
-        building.detectNearByPlayer();
-      });
     this.options.render.portal &&
       master.portals.forEach((portal: Portal) => {
-        portal.render();
-        portal.detectNearByPlayer();
+        if (portal.locate === this.map.name) {
+          this.options.render.shadow && portal.renderShadow();
+          portal.render();
+          portal.detectNearByPlayer();
+        }
+      });
+    this.options.render.building &&
+      UNIT.BUILDING.forEach((building: Building) => {
+        if (building.locate === this.map.name) {
+          // this.options.render.shadow && building.renderShadow();
+          building.render();
+          building.detectNearByPlayer();
+        }
       });
     this.options.render.npc &&
       UNIT.NPC.forEach((npc: NPC) => {

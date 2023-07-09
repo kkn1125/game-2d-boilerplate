@@ -22,7 +22,7 @@
 
 ## Version
 
-current - v0.0.7
+current - v0.0.8
 
 ## 폴더 구조
 

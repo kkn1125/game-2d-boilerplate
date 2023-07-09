@@ -3,7 +3,7 @@ import { COLOR } from "../../util/global";
 
 const Devian = new NPC("Devian");
 Devian.setLocate("home");
-Devian.setPosition(15, 8);
+Devian.setPosition(5, 12);
 // Devian.addAutoMessage("hi");
 // Devian.addAutoMessage("my name is kimson");
 Devian.addStaticMessage(

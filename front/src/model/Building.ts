@@ -1,3 +1,4 @@
+import Engine from "../core/Engine";
 import {
   CAMERA,
   COLOR,
@@ -21,8 +22,13 @@ export default class Building {
 
   locate: string = "home";
 
+  engine: Engine;
+
   hello: boolean = false;
   nearBy: boolean = false;
+  eventList: {
+    [key: string]: Function[];
+  } = {};
 
   constructor(name: string);
   constructor(id: number, name: string);
@@ -39,6 +45,15 @@ export default class Building {
       this.name = b || "guest";
     }
     this.goSpawn();
+  }
+
+  initEngine(engine: Engine) {
+    this.engine = engine;
+  }
+
+  addEventListener(type: string, fn: Function) {
+    if (!this.eventList[type]) this.eventList[type] = [];
+    this.eventList[type].push(fn);
   }
 
   setLocate(locate: string) {
@@ -98,6 +113,7 @@ export default class Building {
             this.height * SIZE.SCALE() -
             (SIZE.UNIT() * SIZE.SCALE()) / 2
     );
+
     ctx.fillStyle = this.color;
     ctx.fillRect(
       master.me?.id === this.id ? x : responsivePositionX,
@@ -111,20 +127,28 @@ export default class Building {
     master.units.forEach((player) => {
       const unit = SIZE.UNIT();
       const scale = SIZE.SCALE();
-      const npcX = this.x * CONTROL.SCALE;
-      const npcY = this.y * CONTROL.SCALE;
+      const boundary = unit * scale;
+      const npcX = this.x;
+      const npcY = this.y + this.height * scale;
       const playerX = player.x * CONTROL.SCALE;
       const playerY = player.y * CONTROL.SCALE;
-      const leftSide = npcX - unit * scale * 2;
-      const rightSide = npcX + unit * scale * 2;
-      const topSide = npcY - unit * scale * 2;
-      const bottomSide = npcY + unit * scale * 2;
+      const leftSide = npcX - boundary;
+      const rightSide = npcX + this.width * scale + boundary;
+      const topSide = npcY;
+      const bottomSide = npcY - this.height * scale + boundary / 2;
+      // console.log(npcX, npcY, player.x, player.y);
+      // console.log(leftSide, player.x, rightSide);
+      // console.log(topSide, player.y, bottomSide);
       if (
         leftSide < playerX &&
         playerX < rightSide &&
         topSide < playerY &&
-        playerY < bottomSide
+        playerY < bottomSide &&
+        player.locate === this.locate
       ) {
+        if (!this.nearBy) {
+          this.eventList?.["nearBy"]?.forEach?.((fn) => fn(this.engine));
+        }
         this.nearBy = true;
         this.onHello();
       } else {

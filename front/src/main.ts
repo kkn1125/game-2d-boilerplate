@@ -8,7 +8,7 @@ import RedHat from "./option/item/RedHat";
 import MapHome from "./option/map/MapHome";
 import MapInBCenter from "./option/map/MapInBCenter";
 import NpcList from "./option/NpcList";
-import HomeToPortal from "./option/portal/homeToCenter";
+import HomeToSunsetHill from "./option/portal/HomeToSunsetHill";
 import PortalList from "./option/PortalList";
 import { master } from "./util/global";
 
@@ -31,46 +31,8 @@ const engine = new Engine({
 });
 // engine.activeGuideLine = false;
 engine.changeMap(MapHome);
-engine.addNpc(
-  ...NpcList.map((npc) => {
-    if (npc.name === "David") {
-      npc.addEventListener("messageend", () => {
-        PageOff.render(2.5).then(() => {
-          engine.changeMap(MapHome);
-          NpcList.forEach((npc) => {
-            if (npc.locate === "home") {
-              // npc.setLocate();
-            }
-          });
-          master.me?.setLocate("home");
-          PageOn.render(2.5);
-        });
-      });
-    }
-
-    return npc;
-  })
-);
-engine.addPortal(
-  ...PortalList.map((portal) => {
-    if (portal.name === "homeToCenter") {
-      portal.addEventListener("messageend", () => {
-        PageOff.render(2.5).then(() => {
-          engine.changeMap(MapInBCenter);
-          NpcList.forEach((npc) => {
-            if (npc.locate === "bcenter") {
-              // npc.setLocate();
-            }
-          });
-          master.me?.setLocate("bcenter");
-          PageOn.render(2.5);
-        });
-      });
-    }
-
-    return portal;
-  })
-);
+engine.addNpc(...NpcList);
+engine.addPortal(...PortalList);
 engine.addBuilding(...BuildingList);
 engine.addPlayer(testUser);
 

@@ -1,3 +1,4 @@
-import HomeToCenter from "./portal/homeToCenter";
+import HomeToSunsetHill from "./portal/HomeToSunsetHill";
+import ToHome from "./portal/ToHome";
 
-export default [HomeToCenter];
+export default [HomeToSunsetHill, ToHome];

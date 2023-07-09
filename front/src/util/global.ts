@@ -29,6 +29,7 @@ export enum COLOR {
   MOMO = "#9a2fa0", // unit
   KIMSON = "#a6ef0a", // unit
   DAVID = "#6bacba", // unit
+  MING = "#cc3672", // unit
 }
 
 export const CONTROL = {

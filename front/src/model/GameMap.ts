@@ -430,24 +430,24 @@ export default class GameMap {
           (CONTROL.STATIC_SCALE / 10) /
           CONTROL.SCALE;
 
-        // this.uiCtx.textAlign = "center";
-        // this.uiCtx.fillStyle = COLOR.BLACK;
-        // this.uiCtx.font = `bold ${36 * scale * 3}px sans-serif`;
+        this.uiCtx.textAlign = "center";
+        this.uiCtx.fillStyle = COLOR.PORTAL;
+        this.uiCtx.font = `bold ${36 * scale * 3}px sans-serif`;
 
-        // /* text outline */
-        // this.uiCtx.lineWidth = 2;
-        // this.uiCtx.strokeStyle = COLOR.WHITE;
-        // this.uiCtx.strokeText(
-        //   portal.name.toUpperCase(),
-        //   portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        //   portalY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
-        // );
+        /* text outline */
+        this.uiCtx.lineWidth = 2;
+        this.uiCtx.strokeStyle = COLOR.WHITE;
+        this.uiCtx.strokeText(
+          portal.name.toUpperCase(),
+          portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          portalY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        );
 
-        // this.uiCtx.fillText(
-        //   portal.name.toUpperCase(),
-        //   portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,
-        //   portalY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
-        // );
+        this.uiCtx.fillText(
+          portal.name.toUpperCase(),
+          portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,
+          portalY / (CONTROL.STATIC_SCALE / 10) - y * scale - 2
+        );
         this.uiCtx.fillStyle = COLOR.PORTAL;
         this.uiCtx.fillRect(
           portalX / (CONTROL.STATIC_SCALE / 10) - x * scale,

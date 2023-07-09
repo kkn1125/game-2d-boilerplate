@@ -1,6 +1,6 @@
 import Effector from "../../model/Effector";
 
-const PageOff = new Effector();
+const PageOff = new Effector(true);
 PageOff.setEffect((process: number | false) => {
   if (process !== false) {
     const toHex = Math.floor((process * 255) / 100);
@@ -8,7 +8,6 @@ PageOff.setEffect((process: number | false) => {
     PageOff.effectCtx.fillStyle = `#000000${toHex
       .toString(16)
       .padStart(2, "0")}`;
-
     PageOff.effectCtx.fillRect(0, 0, innerWidth, innerHeight);
   }
 });

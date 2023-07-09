@@ -10,9 +10,14 @@ export default class Effector {
   end: number = 100;
 
   temp: number = 0;
-  animate: number;
+  animate: number | null = null;
   effect: Function;
   resolver: (value: unknown) => void;
+  isForce: boolean;
+
+  constructor(force: boolean = false) {
+    this.isForce = force;
+  }
 
   setEffect(effect: Function) {
     this.effect = effect;
@@ -29,9 +34,7 @@ export default class Effector {
       this.effect?.(false);
       this.resolver(true);
       cancelAnimationFrame(this.animate);
-      this.start = 0;
-      this.temp = 0;
-      this.animate = 0;
+      return;
     }
 
     this.start += delay;
@@ -45,5 +48,11 @@ export default class Effector {
     return new Promise((resolve) => {
       this.resolver = resolve;
     });
+  }
+
+  reset() {
+    this.start = 0;
+    this.temp = 0;
+    this.animate = null;
   }
 }

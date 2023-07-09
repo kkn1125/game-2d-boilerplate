@@ -16,11 +16,12 @@ export default class UI {
     return document.querySelectorAll(".chat-modal.modal").length > 0;
   }
 
-  static CHAT_MODAL(id: number, name: string, message: string) {
+  static CHAT_MODAL(id: number, name: string, type: string, message: string) {
     const modal = UI.createEl("div");
     modal.classList.add("chat-modal", "modal");
     const title = UI.createEl("div");
     title.classList.add("chat-modal", "title");
+    title.dataset.type = type;
     title.innerHTML = name;
     const profile = UI.createEl("div") as HTMLImageElement;
     profile.classList.add("profile");
@@ -164,11 +165,10 @@ export default class UI {
   }
 
   showJoystick(isMobile: boolean) {
+    document.querySelectorAll("#joystick").forEach((el) => el.remove());
     if (isMobile) {
       const [joystick, ball] = UI.JOYSTICK();
       this.ball = ball;
-    } else {
-      document.querySelectorAll("#joystick").forEach((el) => el.remove());
     }
   }
 
@@ -176,8 +176,8 @@ export default class UI {
     this.APP.append(ui);
   }
 
-  openModal(id: number, name: string, message: string) {
+  openModal(id: number, name: string, type: string, message: string) {
     UI.clearChatModals();
-    this.append(UI.CHAT_MODAL(id, name, message));
+    this.append(UI.CHAT_MODAL(id, name, type, message));
   }
 }

@@ -3,7 +3,7 @@ import { COLOR } from "../../util/global";
 
 const Kimson = new NPC("Kimson");
 Kimson.setLocate("home");
-Kimson.setPosition(22, 4);
+Kimson.setPosition(7, 6);
 
 Kimson.addStaticMessage(
   `안녕하세요. GM ${Kimson.name}입니다. 현재 보고 계신 2D 게임 엔진은 바닐라 타입스크립트로 제작되었습니다.`

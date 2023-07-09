@@ -1,3 +1,4 @@
+import Engine from "../core/Engine";
 import { CAMERA, COLOR, CONTROL, ctx, master, SIZE } from "../util/global";
 import ChatQueue from "./ChatQueue";
 import UI from "./UI";
@@ -13,6 +14,7 @@ export default class NPC extends Unit {
     this.setColor(COLOR.NPC);
   }
   ui: UI;
+  engine: Engine;
   hello: boolean = false;
   question: boolean = false;
   chatQueue: ChatQueue = new ChatQueue();
@@ -28,6 +30,10 @@ export default class NPC extends Unit {
 
   initUI(ui: UI) {
     this.ui = ui;
+  }
+
+  initEngine(engine: Engine) {
+    this.engine = engine;
   }
 
   addEventListener(type: string, fn: Function) {
@@ -52,9 +58,14 @@ export default class NPC extends Unit {
     });
 
     if (message) {
-      this.ui.openModal(this.id, this.name, message.message);
+      this.ui.openModal(
+        this.id,
+        this.name,
+        this.constructor.name,
+        message.message
+      );
     } else {
-      this.eventList?.["messageend"]?.forEach?.((fn) => fn());
+      this.eventList?.["messageend"]?.forEach?.((fn) => fn(this.engine));
       UI.clearChatModals();
       this.talkExit();
     }
@@ -70,14 +81,15 @@ export default class NPC extends Unit {
     master.units.forEach((player) => {
       const unit = SIZE.UNIT();
       const scale = SIZE.SCALE();
+      const boundary = unit * scale * 2;
       const npcX = this.x * CONTROL.SCALE;
       const npcY = this.y * CONTROL.SCALE;
       const playerX = player.x * CONTROL.SCALE;
       const playerY = player.y * CONTROL.SCALE;
-      const leftSide = npcX - unit * scale * 2;
-      const rightSide = npcX + unit * scale * 2;
-      const topSide = npcY - unit * scale * 2;
-      const bottomSide = npcY + unit * scale * 2;
+      const leftSide = npcX - boundary;
+      const rightSide = npcX + boundary;
+      const topSide = npcY - boundary;
+      const bottomSide = npcY + boundary;
       if (
         leftSide < playerX &&
         playerX < rightSide &&
@@ -85,6 +97,9 @@ export default class NPC extends Unit {
         playerY < bottomSide &&
         player.locate === this.locate
       ) {
+        if (!this.nearBy) {
+          this.eventList?.["nearBy"]?.forEach?.((fn) => fn(this.engine));
+        }
         this.nearBy = true;
         this.onHello();
       } else {

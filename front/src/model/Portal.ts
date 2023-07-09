@@ -1,6 +1,8 @@
 import NPC from "./NPC";
 
 export default class Portal extends NPC {
+  destination: string;
+
   constructor(name: string);
   constructor(id: number, name: string);
   constructor(a: string | number, b?: string) {
@@ -9,5 +11,13 @@ export default class Portal extends NPC {
     } else {
       super(a);
     }
+  }
+
+  setDestination(destination: string) {
+    this.destination = destination;
+  }
+
+  destinationName() {
+    return this.destination || this.name;
   }
 }

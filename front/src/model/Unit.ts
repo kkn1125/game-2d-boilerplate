@@ -56,8 +56,9 @@ export default class Unit {
   }
 
   goSpawn(x: number = 0, y: number = 0) {
-    if (this.locate === "home") this.setPosition(x || 25, y || 5);
+    if (this.locate === "home") this.setPosition(x || 10, y || 7);
     if (this.locate === "bcenter") this.setPosition(x || 5, y || 5);
+    if (this.locate === "fsunsethill") this.setPosition(x || 10.7, y || 10);
   }
 
   move() {
@@ -88,7 +89,7 @@ export default class Unit {
     /* text outline */
     ctx.lineWidth = 3;
     ctx.strokeStyle =
-      this.constructor.name === "Portal" ? "#00000000" : "#000000";
+      /* this.constructor.name === "Portal" ? "#00000000" : */ "#000000";
     ctx.strokeText(
       this.name.toUpperCase(),
       master.me?.id === this.id
@@ -103,9 +104,9 @@ export default class Unit {
     ctx.fillStyle =
       this.constructor.name === "NPC"
         ? this.color
-        : this.constructor.name === "Portal"
-        ? COLOR.PORTAL + "00"
-        : COLOR.NAME;
+        : // : this.constructor.name === "Portal"
+          // ? COLOR.PORTAL + "00"
+          COLOR.NAME;
     ctx.fillText(
       this.name.toUpperCase(),
       master.me?.id === this.id

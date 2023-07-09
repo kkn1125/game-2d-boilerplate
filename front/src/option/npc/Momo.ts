@@ -3,7 +3,7 @@ import { COLOR } from "../../util/global";
 
 const Momo = new NPC("Momo");
 Momo.setLocate("home");
-Momo.setPosition(30, 12);
+Momo.setPosition(12, 9);
 // Momo.addAutoMessage("hi");
 // Momo.addAutoMessage("my name is kimson");
 Momo.addStaticMessage(

@@ -1,3 +1,4 @@
+import Effector from "../model/Effector";
 import NPC from "../model/NPC";
 import Portal from "../model/Portal";
 import UI from "../model/UI";
@@ -64,6 +65,7 @@ export default class EventListener {
 
   ui: UI;
   rayPointer: RayPointer;
+  effectors: Effector[] = [];
 
   mobJoystick: {
     w: boolean;
@@ -87,6 +89,10 @@ export default class EventListener {
 
   initUI(ui: UI) {
     this.ui = ui;
+  }
+
+  initEffectors(effectors: Effector[]) {
+    this.effectors = [...effectors];
   }
 
   initRayPointer(rayPointer: RayPointer) {
@@ -117,6 +123,9 @@ export default class EventListener {
 
   handleJoyStickDown(e: KeyboardEvent) {
     const key = e.key as KeySet;
+    if (this.effectors.some((effect) => effect.start > 0 && effect.isForce))
+      return;
+
     if ((key as OtherKeySet) === " ") {
       const u = Array.from(UNIT.NPC.values()).find(
         (npc) => npc.nearBy && master.me?.locate === npc.locate
@@ -450,6 +459,9 @@ export default class EventListener {
   }
 
   handleJoyStickTouchMove(t: TouchEvent) {
+    if (this.effectors.some((effect) => effect.start > 0 && effect.isForce))
+      return;
+
     const e = t.touches[0];
 
     if (this.mobJoystick.touch) {
@@ -607,6 +619,9 @@ export default class EventListener {
   }
 
   handleNpcClick(e: MouseEvent) {
+    if (this.effectors.some((effect) => effect.start > 0 && effect.isForce))
+      return;
+
     const npc = this.rayPointer.selector?.[0] as NPC;
     if (npc && npc.nearBy && npc.chatQueue.temp.length === 0) {
       npc.talk();

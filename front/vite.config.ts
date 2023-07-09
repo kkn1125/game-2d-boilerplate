@@ -23,5 +23,11 @@ export default defineConfig(({ command, mode }) => {
       port: Number(process.env.PORT) || 3000,
     },
     base: "",
+    build: {
+      minify: false,
+      terserOptions: {
+        keep_classnames: true,
+      },
+    },
   };
 });

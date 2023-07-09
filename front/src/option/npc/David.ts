@@ -1,5 +1,10 @@
+import Engine from "../../core/Engine";
 import NPC from "../../model/NPC";
-import { COLOR } from "../../util/global";
+import { COLOR, master } from "../../util/global";
+import PageOff from "../effect/PageOff";
+import PageOn from "../effect/PageOn";
+import MapHome from "../map/MapHome";
+import NpcList from "../NpcList";
 
 const David = new NPC("David");
 David.setLocate("bcenter");
@@ -13,5 +18,31 @@ David.addStaticMessage(
 David.addStaticMessage("...");
 David.addStaticMessage("다시 마을로 가고 싶구나?");
 David.color = COLOR.DAVID;
+
+David.addEventListener("messageend", (engine: Engine) => {
+  PageOff.render(2.5).then(() => {
+    PageOff.reset();
+    engine.changeMap(MapHome);
+    // NpcList.forEach((npc) => {
+    //   if (npc.locate === "home") {
+    //     // npc.setLocate();
+    //   }
+    // });
+    master.me?.setLocate("home");
+    PageOn.render(2.5).then(() => {
+      PageOn.reset();
+    });
+  });
+});
+
+// .map((npc) => {
+//   if (npc.name === "David") {
+//     npc.addEventListener("messageend", () => {
+
+//     });
+//   }
+
+//   return npc;
+// })
 
 export default David;
