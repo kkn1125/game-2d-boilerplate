@@ -36,7 +36,7 @@ export default class NPC extends Unit {
     this.engine = engine;
   }
 
-  addEventListener(type: string, fn: Function) {
+  addEventListener(type: "nearby" | "messageend", fn: Function) {
     if (!this.eventList[type]) this.eventList[type] = [];
     this.eventList[type].push(fn);
   }
@@ -98,7 +98,7 @@ export default class NPC extends Unit {
         player.locate === this.locate
       ) {
         if (!this.nearBy) {
-          this.eventList?.["nearBy"]?.forEach?.((fn) => fn(this.engine));
+          this.eventList?.["nearby"]?.forEach?.((fn) => fn(this.engine));
         }
         this.nearBy = true;
         this.onHello();
@@ -115,7 +115,7 @@ export default class NPC extends Unit {
 
     super.render();
 
-    if (this.hello) {
+    if (this.hello && this.constructor.name === "NPC") {
       const size = this.startBound;
       const npcX = this.x * CONTROL.SCALE;
       const npcY = this.y * CONTROL.SCALE;

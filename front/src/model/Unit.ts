@@ -42,8 +42,28 @@ export default class Unit {
   }
 
   setLocate(locate: string) {
-    this.locate = locate;
-    this.goSpawn();
+    switch (locate) {
+      case "home":
+        this.goSpawn(10, 7);
+        break;
+      case "home-sunset1":
+        this.goSpawn(5.7, 0.8);
+        break;
+      case "bcenter":
+        this.goSpawn(5, 5);
+        break;
+      case "home-bcenter1":
+        this.goSpawn(8.8, 6.3);
+        break;
+      case "fsunsethill":
+        this.goSpawn(10.7, 10);
+        break;
+      default:
+        this.goSpawn();
+        break;
+    }
+
+    this.locate = locate.split("-")[0];
   }
 
   setPosition(x: number, y: number) {
@@ -56,9 +76,7 @@ export default class Unit {
   }
 
   goSpawn(x: number = 0, y: number = 0) {
-    if (this.locate === "home") this.setPosition(x || 10, y || 7);
-    if (this.locate === "bcenter") this.setPosition(x || 5, y || 5);
-    if (this.locate === "fsunsethill") this.setPosition(x || 10.7, y || 10);
+    this.setPosition(x || 10, y || 7);
   }
 
   move() {

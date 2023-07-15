@@ -11,7 +11,6 @@ import {
   SIZE,
   UNIT,
   uiCanvas,
-  effectCanvas,
 } from "../util/global";
 import RayPointer from "./RayPointer";
 
@@ -609,8 +608,6 @@ export default class EventListener {
     bgCanvas.height = innerHeight;
     uiCanvas.width = innerWidth;
     uiCanvas.height = innerHeight;
-    effectCanvas.width = innerWidth;
-    effectCanvas.height = innerHeight;
   }
 
   handleResizeCanvas() {

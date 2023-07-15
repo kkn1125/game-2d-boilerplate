@@ -1,10 +1,6 @@
-import { effectCanvas } from "../util/global";
-
 export default class Effector {
-  effectCanvas: HTMLCanvasElement = effectCanvas;
-  effectCtx: CanvasRenderingContext2D = this.effectCanvas.getContext(
-    "2d"
-  ) as CanvasRenderingContext2D;
+  effectCanvas: HTMLCanvasElement;
+  effectCtx: CanvasRenderingContext2D;
 
   start: number = 0;
   end: number = 100;
@@ -14,9 +10,15 @@ export default class Effector {
   effect: Function;
   resolver: (value: unknown) => void;
   isForce: boolean;
+  word: string;
 
   constructor(force: boolean = false) {
     this.isForce = force;
+  }
+
+  setWord(word: string) {
+    this.word = word;
+    return this;
   }
 
   setEffect(effect: Function) {
@@ -29,7 +31,7 @@ export default class Effector {
 
     // if (this.temp !== count) {
     // }
-    this.effect?.(this.start * delay);
+    this.effect?.(this.start * delay, this.word);
     if (this.start >= this.end) {
       this.effect?.(false);
       this.resolver(true);
@@ -43,6 +45,14 @@ export default class Effector {
   }
 
   render(delay = 1) {
+    this.effectCanvas = document.createElement("canvas");
+    this.effectCtx = this.effectCanvas.getContext(
+      "2d"
+    ) as CanvasRenderingContext2D;
+    document.body.append(this.effectCanvas);
+    this.handleResize();
+    window.addEventListener("resize", this.handleResize.bind(this));
+
     this.animate = requestAnimationFrame(this.animation.bind(this, delay));
 
     return new Promise((resolve) => {
@@ -50,9 +60,19 @@ export default class Effector {
     });
   }
 
+  handleResize() {
+    this.effectCanvas.width = innerWidth;
+    this.effectCanvas.height = innerHeight;
+  }
+
   reset() {
+    // this.effectCtx.clearRect(0, 0, innerWidth, innerHeight);
     this.start = 0;
     this.temp = 0;
     this.animate = null;
+    setTimeout(() => {
+      window.removeEventListener("resize", this.handleResize.bind(this));
+      this.effectCanvas.remove();
+    }, 100);
   }
 }

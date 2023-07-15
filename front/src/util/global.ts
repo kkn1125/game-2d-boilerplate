@@ -85,12 +85,12 @@ export const APP = () => document.getElementById("app") as HTMLDivElement;
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;
 export const bgCanvas = document.createElement("canvas") as HTMLCanvasElement;
 export const uiCanvas = document.createElement("canvas") as HTMLCanvasElement;
-export const effectCanvas = document.createElement(
-  "canvas"
-) as HTMLCanvasElement;
+// export const effectCanvas = document.createElement(
+//   "canvas"
+// ) as HTMLCanvasElement;
 export const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-APP().append(bgCanvas, canvas, uiCanvas, effectCanvas);
+APP().append(bgCanvas, canvas, uiCanvas);
 
 export enum FIELD_VALUE {
   block = 0,

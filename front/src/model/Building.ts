@@ -51,7 +51,7 @@ export default class Building {
     this.engine = engine;
   }
 
-  addEventListener(type: string, fn: Function) {
+  addEventListener(type: "nearby" | "messageend", fn: Function) {
     if (!this.eventList[type]) this.eventList[type] = [];
     this.eventList[type].push(fn);
   }
@@ -132,8 +132,8 @@ export default class Building {
       const npcY = this.y + this.height * scale;
       const playerX = player.x * CONTROL.SCALE;
       const playerY = player.y * CONTROL.SCALE;
-      const leftSide = npcX - boundary;
-      const rightSide = npcX + this.width * scale + boundary;
+      const leftSide = npcX; /*  - boundary + boundary */
+      const rightSide = npcX + this.width * scale; /* + boundary - boundary */
       const topSide = npcY;
       const bottomSide = npcY - this.height * scale + boundary / 2;
       // console.log(npcX, npcY, player.x, player.y);
@@ -147,7 +147,7 @@ export default class Building {
         player.locate === this.locate
       ) {
         if (!this.nearBy) {
-          this.eventList?.["nearBy"]?.forEach?.((fn) => fn(this.engine));
+          this.eventList?.["nearby"]?.forEach?.((fn) => fn(this.engine));
         }
         this.nearBy = true;
         this.onHello();

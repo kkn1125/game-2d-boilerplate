@@ -3,6 +3,7 @@ import NPC from "../../model/NPC";
 import { COLOR, master } from "../../util/global";
 import PageOff from "../effect/PageOff";
 import PageOn from "../effect/PageOn";
+import WordFloat from "../effect/WordFloat";
 import MapHome from "../map/MapHome";
 import NpcList from "../NpcList";
 
@@ -21,6 +22,11 @@ David.color = COLOR.DAVID;
 
 David.addEventListener("messageend", (engine: Engine) => {
   PageOff.render(2.5).then(() => {
+    WordFloat.setWord("태초마을")
+      .render(1)
+      .then(() => {
+        WordFloat.reset();
+      });
     PageOff.reset();
     engine.changeMap(MapHome);
     // NpcList.forEach((npc) => {
@@ -28,7 +34,7 @@ David.addEventListener("messageend", (engine: Engine) => {
     //     // npc.setLocate();
     //   }
     // });
-    master.me?.setLocate("home");
+    master.me?.setLocate("home-bcenter1");
     PageOn.render(2.5).then(() => {
       PageOn.reset();
     });
