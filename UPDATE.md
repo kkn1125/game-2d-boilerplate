@@ -3,6 +3,8 @@
 - v0.0.9
   - 추가
     - 맴 전환 시 맵 이름 표시 이펙터 추가
+  - 수정
+    - ToHome.ts => Sunset1ToHome.ts로 파일 변경
 - v0.0.8
   - 추가
     - 신규 맵 Sunset Hill 추가
