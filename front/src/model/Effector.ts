@@ -75,7 +75,6 @@ export default class Effector {
     setTimeout(() => {
       window.removeEventListener("resize", this.handleResize.bind(this));
       this.effectCanvas.remove();
-      document.querySelectorAll("#effect-layer").forEach((el) => el.remove());
     }, 100);
   }
 }
