@@ -103,7 +103,9 @@ export default class GameMap {
     const bottomLeftBlock = binary?.[indexB]?.[indexL];
     const bottomRightBlock = binary?.[indexB]?.[indexR];
 
-    const collisionType = (type: "block" | "water") => {
+    const collisionType = (
+      type: "block" | "water" | "grass2" | "grass3" | "grass4"
+    ) => {
       if (!master.me) return;
       /* Map 내부 오브젝트에 대한 감지 */
       if (
@@ -182,6 +184,9 @@ export default class GameMap {
     } else {
       collisionType("block");
       collisionType("water");
+      collisionType("grass2");
+      collisionType("grass3");
+      collisionType("grass4");
     }
   }
 
