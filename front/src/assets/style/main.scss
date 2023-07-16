@@ -162,16 +162,20 @@ $inventory-cell-size: 45px;
       }
     }
   }
-  @keyframes open {
-    0% {
-      opacity: 0;
+
+  &.open {
+    @keyframes open {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
     }
-    100% {
-      opacity: 1;
-    }
+
+    animation: open 150ms ease-in-out both;
+    -webkit-animation: open 150ms ease-in-out both;
   }
-  animation: open 150ms ease-in-out both;
-  -webkit-animation: open 150ms ease-in-out both;
 }
 
 #joystick {

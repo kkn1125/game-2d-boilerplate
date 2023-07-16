@@ -1,8 +1,11 @@
+import Engine from "../core/Engine";
+import NoneItem from "../option/item/NoneItem";
 import {
   CAMERA,
   COLOR,
   CONTROL,
   ctx,
+  dev,
   JOYSTICK,
   MAP_PADDING,
   master,
@@ -10,9 +13,14 @@ import {
 } from "../util/global";
 import Inventory from "./Inventory";
 import Item from "./Item";
+import UI from "./UI";
 
 export default class Unit {
   static id: number = 0;
+
+  ui: UI;
+  engine: Engine;
+
   id: number = 0;
   name: string;
   x: number = 0;
@@ -22,6 +30,7 @@ export default class Unit {
   velocity: number = master.velocity;
   money: number = 0;
   inventory: Inventory = new Inventory();
+
   locate: string = "home";
 
   constructor(name: string);
@@ -39,6 +48,15 @@ export default class Unit {
       this.name = b || "guest";
     }
     this.goSpawn();
+    dev.alias(this.name).log("생성");
+  }
+
+  initUI(ui: UI) {
+    this.ui = ui;
+  }
+
+  initEngine(engine: Engine) {
+    this.engine = engine;
   }
 
   setLocate(locate: string) {
@@ -185,14 +203,43 @@ export default class Unit {
     ctx.shadowBlur = 0;
   }
 
-  getItem(newItem: Item) {
+  getItem(newItem: Item, force: boolean = false) {
+    if (newItem.lock && !force) return;
     for (let row of this.inventory.bag) {
-      const noneIndex = row.findIndex((cell) => cell.type === "none");
+      const noneIndex = row.findIndex((cell) => cell === null);
       if (noneIndex > -1) {
+        const index = this.engine.dropList.findIndex(
+          (drop) => drop.id === newItem.id
+        );
+        if (index > -1) {
+          const dropedItem = this.engine.dropList.splice(index, 1)[0];
+          dropedItem.locate = "";
+        }
         row[noneIndex] = newItem;
+        newItem.lock = true;
+        if (this.inventory.isOpen) {
+          this.ui.redrawInventory.call(this.ui);
+        }
         break;
       }
     }
   }
-  dropItem() {}
+
+  dropItem(row: number = 0, column: number = 0) {
+    console.log("drop");
+    const dropItem = this.inventory.bag[row].splice(column, 1, null)[0];
+    console.log(dropItem);
+    if (dropItem) {
+      dropItem?.drop(this.locate, this.x, this.y);
+      this.engine.dropList.push(dropItem);
+      dev.alias("after drop bag").log(this.inventory.bag[0][0]);
+      dev.alias("drop item").log(dropItem);
+      if (this.inventory.isOpen) {
+        this.ui.redrawInventory.call(this.ui);
+      }
+      return dropItem;
+    }
+
+    return null;
+  }
 }

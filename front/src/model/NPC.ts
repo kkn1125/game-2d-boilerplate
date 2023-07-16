@@ -13,8 +13,6 @@ export default class NPC extends Unit {
     }
     this.setColor(COLOR.NPC);
   }
-  ui: UI;
-  engine: Engine;
   hello: boolean = false;
   question: boolean = false;
   chatQueue: ChatQueue = new ChatQueue();
@@ -27,14 +25,6 @@ export default class NPC extends Unit {
   eventList: {
     [key: string]: Function[];
   } = {};
-
-  initUI(ui: UI) {
-    this.ui = ui;
-  }
-
-  initEngine(engine: Engine) {
-    this.engine = engine;
-  }
 
   addEventListener(type: "nearby" | "messageend", fn: Function) {
     if (!this.eventList[type]) this.eventList[type] = [];

@@ -36,7 +36,16 @@ engine.addPortal(...PortalList);
 engine.addBuilding(...BuildingList);
 engine.addPlayer(testUser);
 
-master.me.getItem(RedHat);
+master.me.getItem(RedHat(), true);
+master.me.getItem(RedHat(), true);
+master.me.getItem(RedHat(), true);
+
+setTimeout(() => {
+  master.me?.dropItem(0, 0);
+  setTimeout(() => {
+    master.me?.dropItem(0, 2);
+  }, 1000);
+}, 1000);
 
 // setTimeout(() => {
 //   PageOff.render(2.5).then(() => {

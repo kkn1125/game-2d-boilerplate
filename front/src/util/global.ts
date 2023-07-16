@@ -19,6 +19,7 @@ export enum COLOR {
   WARN = "#ff0000", // warn
   BLOCK = "#555555", // block
   ROAD = "#cccccc", // road
+  ITEM = "#00ff00", // unit
   UNIT = "#ffff00", // unit
   NPC = "#bc0fab", // unit
   NAME = "#ffffff", // unit
@@ -80,6 +81,7 @@ export const UNIT = {
   NPC: new Map<number, NPC>(),
   BUILDING: new Map<number, Building>(),
 };
+export const DROP_LOCK_TIME = 2000;
 
 export const APP = () => document.getElementById("app") as HTMLDivElement;
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;

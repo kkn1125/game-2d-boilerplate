@@ -1,6 +1,7 @@
 import Building from "../model/Building";
 import Effector from "../model/Effector";
 import GameMap from "../model/GameMap";
+import Item from "../model/Item";
 import NPC from "../model/NPC";
 import Portal from "../model/Portal";
 import UI from "../model/UI";
@@ -12,6 +13,7 @@ import {
   CONTROL,
   ctx,
   dev,
+  dropCanvas,
   MAP_PADDING,
   master,
   SIZE,
@@ -28,6 +30,9 @@ export default class Engine {
   effectors: Effector[] = [];
   activeGuideLine: boolean = false;
   options: EngineOption;
+
+  dropList: Item[] = [];
+  dropCtx = dropCanvas.getContext("2d");
 
   constructor(options: EngineOption) {
     /* Engine Options display */
@@ -81,6 +86,8 @@ export default class Engine {
 
   addPlayer(...units: Unit[]) {
     for (let unit of units) {
+      unit.initUI(this.ui);
+      unit.initEngine(this);
       master.units.set(unit.id, unit);
     }
   }
@@ -156,6 +163,15 @@ export default class Engine {
           : 0.1;
       this.map.drawMinimap(-200, -200, scale, this.options.render);
       this.map.drawMoney();
+    }
+
+    /* drop item render */
+    this.dropCtx?.clearRect(0, 0, innerWidth, innerHeight);
+    if (this.dropList.length > 0) {
+      this.dropList.forEach((item) => {
+        if (master.me && item && item.locate === master.me.locate)
+          item.render();
+      });
     }
     requestAnimationFrame(this.render.bind(this));
   }

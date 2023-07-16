@@ -201,8 +201,10 @@ export default class EventListener {
       if (master.me) {
         if (!document.querySelector("#inventory")) {
           this.ui.openInventory();
+          master.me.inventory.setOpen();
         } else {
           this.ui.closeInventory();
+          master.me.inventory.setClose();
         }
       }
     }
@@ -221,6 +223,7 @@ export default class EventListener {
 
       if (document.querySelector("#inventory")) {
         this.ui.closeInventory();
+        master.me?.inventory.setClose();
       }
     }
     if ((key as OtherKeySet) === "+") {
