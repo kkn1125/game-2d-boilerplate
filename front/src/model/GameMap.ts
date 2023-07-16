@@ -16,7 +16,7 @@ import { setPaddingToArray } from "../util/tool";
 
 export default class GameMap {
   name: string = "";
-  binary: number[][];
+  binary: (string | number)[][];
   bgCanvas: HTMLCanvasElement = bgCanvas;
   uiCanvas: HTMLCanvasElement = uiCanvas;
   bgCtx: CanvasRenderingContext2D = this.bgCanvas.getContext(
@@ -43,7 +43,9 @@ export default class GameMap {
           row
             .replace(/[\s]+/, "")
             .split("")
-            .map((column) => Number(column))
+            .map((column) =>
+              column.match(/^[\d]+$/) ? Number(column) : column
+            )
         ),
       paddingType,
       MAP_PADDING
@@ -197,21 +199,29 @@ export default class GameMap {
     blockSize: number,
     playerViewX: number,
     playerViewY: number,
-    binary: number[][],
+    binary: (string | number)[][],
     scale: number,
     isBg: boolean
   ) {
     const masterCtx = isBg ? this.bgCtx : this.uiCtx;
     const renderBlock = (x: number, y: number, field: number) => {
-      masterCtx.fillStyle = COLOR.BLOCK;
-      masterCtx.fillRect(
+      // masterCtx.fillStyle = COLOR.BLOCK;
+      // masterCtx.fillRect(
+      //   x * blockSize + playerViewX,
+      //   y * blockSize + playerViewY,
+      //   blockSize,
+      //   blockSize
+      // );
+      masterCtx.drawImage(
+        TEXTURE[field],
         x * blockSize + playerViewX,
         y * blockSize + playerViewY,
         blockSize,
         blockSize
       );
+
       if (this.guideLine) {
-        masterCtx.strokeStyle = '#ff000056';
+        masterCtx.strokeStyle = "#ff000056";
         masterCtx.lineWidth = 2;
         masterCtx.strokeRect(
           x * blockSize + playerViewX,
@@ -221,17 +231,30 @@ export default class GameMap {
         );
       }
     };
-    const renderGrass = (x: number, y: number, field: number) => {
+    const renderRock = (x: number, y: number, field: number) => {
       masterCtx.drawImage(
-        TEXTURE[FIELD_VALUE["grass"]],
-        0,
-        0,
-        blockSize * scale,
-        blockSize * scale,
+        TEXTURE[field],
         x * blockSize + playerViewX,
         y * blockSize + playerViewY,
         blockSize,
         blockSize
+      );
+    };
+    const renderGrass = (x: number, y: number, field: number) => {
+      masterCtx.drawImage(
+        TEXTURE[field],
+        x * blockSize + playerViewX,
+        y * blockSize + playerViewY,
+        blockSize,
+        blockSize
+        // 0,
+        // 0,
+        // blockSize * scale,
+        // blockSize * scale,
+        // x * blockSize + playerViewX,
+        // y * blockSize + playerViewY,
+        // blockSize,
+        // blockSize
       );
     };
 
@@ -251,7 +274,7 @@ export default class GameMap {
         blockSize
       );
       if (this.guideLine) {
-        masterCtx.strokeStyle = '#ff000026';
+        masterCtx.strokeStyle = "#ff000026";
         masterCtx.lineWidth = 2;
         masterCtx.strokeRect(
           x * blockSize + playerViewX,
@@ -289,20 +312,30 @@ export default class GameMap {
       for (let ci = 0; ci < bRow.length / 2; ci++) {
         const columnMirror = bRow.length - ci - 1;
         const column = ci;
-        const bColumnMirror = bRow[columnMirror];
-        const bColumn = bRow[column];
+        const bColumnMirror = bRow[columnMirror] as string | number;
+        const bColumn = bRow[column] as string | number;
 
         /* Blocks */
         /* half column top-left */
-        if (bColumn === FIELD_VALUE["block"]) {
+        if (
+          bColumn === FIELD_VALUE["block"] ||
+          bColumn === (FIELD_VALUE["grass2"] as number) ||
+          bColumn === (FIELD_VALUE["grass3"] as number) ||
+          bColumn === (FIELD_VALUE["grass4"] as number)
+        ) {
           renderBlock(column, row, bColumn);
-          renderGrass(column, row, bColumn);
+          // renderGrass(column, row, bColumn);
         }
 
         /* half column top-right */
-        if (bColumnMirror === FIELD_VALUE["block"]) {
+        if (
+          bColumnMirror === FIELD_VALUE["block"] ||
+          bColumnMirror === (FIELD_VALUE["grass2"] as number) ||
+          bColumnMirror === (FIELD_VALUE["grass3"] as number) ||
+          bColumnMirror === (FIELD_VALUE["grass4"] as number)
+        ) {
           renderBlock(columnMirror, row, bColumnMirror);
-          renderGrass(columnMirror, row, bColumnMirror);
+          // renderGrass(columnMirror, row, bColumnMirror);
         }
 
         /* Roads */
@@ -337,15 +370,25 @@ export default class GameMap {
 
         /* Blocks */
         /* half column bottom-left */
-        if (bColumn === FIELD_VALUE["block"]) {
+        if (
+          bColumn === FIELD_VALUE["block"] ||
+          bColumn === (FIELD_VALUE["grass2"] as number) ||
+          bColumn === (FIELD_VALUE["grass3"] as number) ||
+          bColumn === (FIELD_VALUE["grass4"] as number)
+        ) {
           renderBlock(column, rowMirror, bColumn);
-          renderGrass(column, rowMirror, bColumn);
+          // renderGrass(column, rowMirror, bColumn);
         }
 
         /* half column bottom-right */
-        if (bColumnMirror === FIELD_VALUE["block"]) {
+        if (
+          bColumnMirror === FIELD_VALUE["block"] ||
+          bColumnMirror === (FIELD_VALUE["grass2"] as number) ||
+          bColumnMirror === (FIELD_VALUE["grass3"] as number) ||
+          bColumnMirror === (FIELD_VALUE["grass4"] as number)
+        ) {
           renderBlock(columnMirror, rowMirror, bColumnMirror);
-          renderGrass(columnMirror, rowMirror, bColumnMirror);
+          // renderGrass(columnMirror, rowMirror, bColumnMirror);
         }
 
         /* Roads */

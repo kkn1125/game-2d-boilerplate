@@ -1,8 +1,11 @@
 import DEFAULT_NPC_IMG from "/images/default_npc.png";
-import GRASS from "/images/grass.png";
+import GRASS from "/images/grass-1.png";
+import GRASS2 from "/images/grass-2.png";
+import GRASS3 from "/images/grass-3.png";
+import GRASS4 from "/images/grass-4.png";
 import ROAD from "/images/road.png";
 import TREE from "/images/tree.png";
-import ROCK from "/images/rock.png";
+import ROCK from "/images/rock-1.png";
 import ROCK2 from "/images/rock2.png";
 import WATER from "/images/water.png";
 import BUSH from "/images/bush.png";
@@ -103,6 +106,9 @@ export enum FIELD_VALUE {
   block = 0,
   road = 1,
   grass = 2,
+  grass2 = "b",
+  grass3 = "c",
+  grass4 = "d",
   water = 3,
   tree = 4,
   flower = 5,
@@ -120,7 +126,11 @@ const createImage = (url: string) => {
 };
 
 export const TEXTURE = {
+  [Number(FIELD_VALUE["block"])]: createImage(GRASS),
   [Number(FIELD_VALUE["grass"])]: createImage(GRASS),
+  [FIELD_VALUE["grass2"]]: createImage(GRASS2),
+  [FIELD_VALUE["grass3"]]: createImage(GRASS3),
+  [FIELD_VALUE["grass4"]]: createImage(GRASS4),
   [Number(FIELD_VALUE["road"])]: createImage(ROAD),
   [Number(FIELD_VALUE["rock"])]: createImage(ROCK),
   [Number(FIELD_VALUE["rock2"])]: createImage(ROCK2),

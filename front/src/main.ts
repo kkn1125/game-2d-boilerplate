@@ -20,13 +20,13 @@ const engine = new Engine({
   render: {
     portal: true,
     shadow: false,
-    building: false,
+    building: true,
     npc: true,
     player: true,
     minimap: true,
   },
   active: {
-    guideLine: true,
+    guideLine: false,
   },
 });
 // engine.activeGuideLine = false;
@@ -40,12 +40,12 @@ master.me.getItem(RedHat(), true);
 master.me.getItem(RedHat(), true);
 master.me.getItem(RedHat(), true);
 
-setTimeout(() => {
-  master.me?.dropItem(0, 0);
-  setTimeout(() => {
-    master.me?.dropItem(0, 2);
-  }, 1000);
-}, 1000);
+// setTimeout(() => {
+//   master.me?.dropItem(0, 0);
+//   setTimeout(() => {
+//     master.me?.dropItem(0, 2);
+//   }, 1000);
+// }, 1000);
 
 // setTimeout(() => {
 //   PageOff.render(2.5).then(() => {

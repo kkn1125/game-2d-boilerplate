@@ -1,5 +1,5 @@
 export const setPaddingToArray = (
-  arr: number[][],
+  arr: (string | number)[][],
   fillType: number,
   padding: number
 ) => {
