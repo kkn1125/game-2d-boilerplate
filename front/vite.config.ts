@@ -24,7 +24,7 @@ export default defineConfig(({ command, mode }) => {
     },
     base: "",
     build: {
-      minify: false,
+      minify: "terser",
       terserOptions: {
         keep_classnames: true,
       },
