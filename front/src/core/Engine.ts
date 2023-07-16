@@ -7,7 +7,16 @@ import UI from "../model/UI";
 import Unit from "../model/Unit";
 import PageOff from "../option/effect/PageOff";
 import PageOn from "../option/effect/PageOn";
-import { COLOR, ctx, master, UNIT } from "../util/global";
+import {
+  COLOR,
+  CONTROL,
+  ctx,
+  dev,
+  MAP_PADDING,
+  master,
+  SIZE,
+  UNIT,
+} from "../util/global";
 import EventListener from "./EventListener";
 import RayPointer from "./RayPointer";
 
@@ -21,6 +30,14 @@ export default class Engine {
   options: EngineOption;
 
   constructor(options: EngineOption) {
+    /* Engine Options display */
+    dev.alias("Engine Options").log(
+      `\n${JSON.stringify(options, null, 2)
+        .replace(/{|}|,|"/g, "")
+        .replace(/\n+/g, "\n")
+        .replace(/true|false/g, ($1) => ($1 === "true" ? "ON" : "OFF"))}\n`
+    );
+
     this.options = options;
     this.initUI();
     this.initRayPointer();
@@ -91,7 +108,7 @@ export default class Engine {
     this.clearCanvas();
     if (this.map) {
       this.map.clear();
-      this.map.render();
+      this.map.render(this.options.active.guideLine);
       // this.map.collision();
     }
     this.options.render.portal &&
@@ -145,10 +162,24 @@ export default class Engine {
 
   guideLine() {
     /* vertical guide line */
-    ctx.fillStyle = COLOR.BLACK + "56";
+    ctx.font = `bold ${16}px monospace`; // font fixed
+    ctx.fillStyle = COLOR.BLACK + "a6";
     ctx.fillRect(innerWidth / 2, 0, 1, innerHeight);
     /* horizontal guide line */
-    ctx.fillStyle = COLOR.BLACK + "56";
     ctx.fillRect(0, innerHeight / 2, innerWidth, 1);
+
+    ctx.textAlign = "left";
+    const getPositionValue = (value: number = 0) =>
+      value /* + (SIZE.BLOCK() * SIZE.SCALE()) / 2 */ /
+        (SIZE.BLOCK() * CONTROL.STATIC_SCALE) -
+      MAP_PADDING;
+    const xValue = getPositionValue(master.me?.x);
+    const yValue = getPositionValue(master.me?.y);
+    ctx.fillStyle = COLOR.BLACK + "96";
+    ctx.fillText(
+      String(`x:${xValue.toFixed(2)}, y:${yValue.toFixed(2)}`),
+      innerWidth / 2 + 5,
+      innerHeight / 2 + 21
+    );
   }
 }

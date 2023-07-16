@@ -1,9 +1,12 @@
+import { dropCanvas } from "../util/global";
+
 type ItemArguments = {
   [key in keyof Item]?: any;
 };
 
 export default class Item {
   static idnumber = 0;
+  dropCtx: CanvasRenderingContext2D;
 
   id: number = 0;
   name: string = "";
@@ -12,6 +15,9 @@ export default class Item {
   dex: number = 0;
   int: number = 0;
   luck: number = 0;
+
+  x: number = 0;
+  y: number = 0;
 
   type: ItemType = "none";
 
@@ -29,6 +35,7 @@ export default class Item {
   enchantment = null;
 
   constructor(options: ItemArguments) {
+    this.dropCtx = dropCanvas.getContext("2d") as CanvasRenderingContext2D;
     Object.entries(options).forEach(([key, value]) => {
       (this as any)[key] = value;
     });
@@ -36,5 +43,14 @@ export default class Item {
 
   getName() {
     return `+${this.enforce} ${this.name}`;
+  }
+
+  drop(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+  }
+
+  render() {
+    this.dropCtx.fillRect(this.x, this.y, 10, 10);
   }
 }

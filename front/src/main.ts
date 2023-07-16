@@ -14,19 +14,19 @@ import { master } from "./util/global";
 
 const testUser = new User("test");
 master.me = testUser;
-master.me.money = 1_500_000_000;
+master.me.money = 0 /* 1_500_000_000 */;
 
 const engine = new Engine({
   render: {
     portal: true,
     shadow: false,
-    building: true,
+    building: false,
     npc: true,
     player: true,
     minimap: true,
   },
   active: {
-    guideLine: false,
+    guideLine: true,
   },
 });
 // engine.activeGuideLine = false;

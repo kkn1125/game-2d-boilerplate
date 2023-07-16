@@ -25,11 +25,13 @@ export default class GameMap {
   uiCtx: CanvasRenderingContext2D = this.uiCanvas.getContext(
     "2d"
   ) as CanvasRenderingContext2D;
+  guideLine: boolean;
 
   constructor(name: string, mapBinary: string = "", paddingType: number = 3) {
     const map = mapBinary || MapList.home;
     this.name = name;
     this.binary = this.convertToMap(map, paddingType);
+    this.guideLine = false;
   }
 
   convertToMap(str: string, paddingType: number) {
@@ -48,7 +50,8 @@ export default class GameMap {
     );
   }
 
-  render() {
+  render(guideLine: boolean = false) {
+    this.guideLine = guideLine;
     this.drawMap();
     this.collision();
   }
@@ -207,6 +210,16 @@ export default class GameMap {
         blockSize,
         blockSize
       );
+      if (this.guideLine) {
+        masterCtx.strokeStyle = '#ff000056';
+        masterCtx.lineWidth = 2;
+        masterCtx.strokeRect(
+          x * blockSize + playerViewX,
+          y * blockSize + playerViewY,
+          blockSize,
+          blockSize
+        );
+      }
     };
     const renderGrass = (x: number, y: number, field: number) => {
       masterCtx.drawImage(
@@ -237,6 +250,16 @@ export default class GameMap {
         blockSize,
         blockSize
       );
+      if (this.guideLine) {
+        masterCtx.strokeStyle = '#ff000026';
+        masterCtx.lineWidth = 2;
+        masterCtx.strokeRect(
+          x * blockSize + playerViewX,
+          y * blockSize + playerViewY,
+          blockSize,
+          blockSize
+        );
+      }
     };
 
     const renderWater = (x: number, y: number, field: number) => {

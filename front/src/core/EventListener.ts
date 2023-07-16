@@ -11,6 +11,7 @@ import {
   SIZE,
   UNIT,
   uiCanvas,
+  dropCanvas,
 } from "../util/global";
 import RayPointer from "./RayPointer";
 
@@ -606,6 +607,8 @@ export default class EventListener {
     canvas.height = innerHeight;
     bgCanvas.width = innerWidth;
     bgCanvas.height = innerHeight;
+    dropCanvas.width = innerWidth;
+    dropCanvas.height = innerHeight;
     uiCanvas.width = innerWidth;
     uiCanvas.height = innerHeight;
   }

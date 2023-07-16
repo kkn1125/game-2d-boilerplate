@@ -83,14 +83,19 @@ export const UNIT = {
 
 export const APP = () => document.getElementById("app") as HTMLDivElement;
 export const canvas = document.createElement("canvas") as HTMLCanvasElement;
+canvas.id = "game-layer";
 export const bgCanvas = document.createElement("canvas") as HTMLCanvasElement;
+bgCanvas.id = "bg-layer";
+export const dropCanvas = document.createElement("canvas") as HTMLCanvasElement;
+dropCanvas.id = "drop-layer";
 export const uiCanvas = document.createElement("canvas") as HTMLCanvasElement;
+uiCanvas.id = "ui-layer";
 // export const effectCanvas = document.createElement(
 //   "canvas"
 // ) as HTMLCanvasElement;
 export const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-APP().append(bgCanvas, canvas, uiCanvas);
+APP().append(bgCanvas, canvas, dropCanvas, uiCanvas);
 
 export enum FIELD_VALUE {
   block = 0,
@@ -125,3 +130,19 @@ export const TEXTURE = {
 export { DEFAULT_NPC_IMG };
 
 export const MAP_PADDING = 6;
+
+export const dev = function () {};
+
+dev.temp = "";
+
+dev.log = ((...data: any[]) => {
+  const name = `[${dev.temp || "SYSTEM"}]`;
+  const timestamp = new Date().toLocaleTimeString("en");
+  console.log(`%c${name}`, "color:yellow", ...data, timestamp);
+  dev.temp = "";
+}).bind(console.log);
+
+dev.alias = (alias: string) => {
+  dev.temp = alias.toUpperCase();
+  return dev;
+};

@@ -45,7 +45,9 @@ export default class Effector {
   }
 
   render(delay = 1) {
-    this.effectCanvas = document.createElement("canvas");
+    const effectCanvas = document.createElement("canvas");
+    effectCanvas.id = "effect-layer";
+    this.effectCanvas = effectCanvas;
     this.effectCtx = this.effectCanvas.getContext(
       "2d"
     ) as CanvasRenderingContext2D;
