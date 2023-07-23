@@ -12,6 +12,7 @@ import {
   UNIT,
   uiCanvas,
   dropCanvas,
+  effectCanvas,
 } from "../util/global";
 import RayPointer from "./RayPointer";
 
@@ -123,8 +124,17 @@ export default class EventListener {
 
   handleJoyStickDown(e: KeyboardEvent) {
     const key = e.key as KeySet;
-    if (this.effectors.some((effect) => effect.start > 0 && effect.isForce))
+    if (
+      this.effectors.some(
+        (effect) => effect.state === "start" && effect.isForce
+      )
+    ) {
+      JOYSTICK["w"] = false;
+      JOYSTICK["s"] = false;
+      JOYSTICK["a"] = false;
+      JOYSTICK["d"] = false;
       return;
+    }
 
     if ((key as OtherKeySet) === " ") {
       const u = Array.from(UNIT.NPC.values()).find(
@@ -152,50 +162,70 @@ export default class EventListener {
         isTalkingP.talk();
         return;
       }
-      let moreThanP = null;
-      const muX = Math.abs((master.me?.x || 0) - (u?.x || 0));
-      const muY = Math.abs((master.me?.y || 0) - (u?.y || 0));
-      const mpX = Math.abs((master.me?.x || 0) - (p?.x || 0));
-      const mpY = Math.abs((master.me?.y || 0) - (p?.y || 0));
-      const uDist = Math.sqrt(muX ** 2 + muY ** 2);
-      const pDist = Math.sqrt(mpX ** 2 + mpY ** 2);
-      moreThanP = uDist > pDist;
 
-      if (moreThanP === false) {
-        UNIT.NPC.forEach((npc) => {
-          if (
-            master.me?.locate === npc.locate &&
-            npc.nearBy &&
-            npc.chatQueue.temp.length === 0
-          ) {
-            npc.talk();
-            if (master.me) master.me.velocity = 0;
-          } else if (
-            master.me?.locate === npc.locate &&
-            npc.nearBy &&
-            npc.chatQueue.temp.length > 0
-          ) {
-            npc.talk();
+      if (master.me && u) {
+        let compare = null;
+        for (let npc of UNIT.NPC.values()) {
+          if (npc.nearBy && npc.locate === master.me.locate) {
+            if (!compare) compare = npc;
+            const npcXGap = Math.abs(master.me.x - npc.x);
+            const npcYGap = Math.abs(master.me.y - npc.y);
+            const compareXGap = Math.abs(master.me.x - compare.x);
+            const compareYGap = Math.abs(master.me.y - compare.y);
+            const dist = Math.sqrt(npcXGap ** 2 + npcYGap ** 2);
+            const compareDist = Math.sqrt(compareXGap ** 2 + compareYGap ** 2);
+            if (compareDist > dist) {
+              compare = npc;
+            }
           }
-        });
-      } else if (moreThanP === true || moreThanP === null) {
-        master.portals.forEach((portal) => {
-          if (
-            master.me?.locate === portal.locate &&
-            portal.nearBy &&
-            portal.chatQueue.temp.length === 0
-          ) {
-            portal.talk();
-            if (master.me) master.me.velocity = 0;
-          } else if (
-            master.me?.locate === portal.locate &&
-            portal.nearBy &&
-            portal.chatQueue.temp.length > 0
-          ) {
-            portal.talk();
-          }
-        });
+        }
+        compare?.talk();
       }
+
+      // let moreThanP = null;
+      // const muX = Math.abs((master.me?.x || 0) - (u?.x || 0));
+      // const muY = Math.abs((master.me?.y || 0) - (u?.y || 0));
+      // const mpX = Math.abs((master.me?.x || 0) - (p?.x || 0));
+      // const mpY = Math.abs((master.me?.y || 0) - (p?.y || 0));
+      // const uDist = Math.sqrt(muX ** 2 + muY ** 2);
+      // const pDist = Math.sqrt(mpX ** 2 + mpY ** 2);
+      // moreThanP = uDist > pDist;
+
+      // if (moreThanP === false) {
+      //   UNIT.NPC.forEach((npc) => {
+      //     if (
+      //       master.me?.locate === npc.locate &&
+      //       npc.nearBy &&
+      //       npc.chatQueue.temp.length === 0
+      //     ) {
+      //       npc.talk();
+      //       if (master.me) master.me.velocity = 0;
+      //     } else if (
+      //       master.me?.locate === npc.locate &&
+      //       npc.nearBy &&
+      //       npc.chatQueue.temp.length > 0
+      //     ) {
+      //       npc.talk();
+      //     }
+      //   });
+      // } else if (moreThanP === true || moreThanP === null) {
+      //   master.portals.forEach((portal) => {
+      //     if (
+      //       master.me?.locate === portal.locate &&
+      //       portal.nearBy &&
+      //       portal.chatQueue.temp.length === 0
+      //     ) {
+      //       portal.talk();
+      //       if (master.me) master.me.velocity = 0;
+      //     } else if (
+      //       master.me?.locate === portal.locate &&
+      //       portal.nearBy &&
+      //       portal.chatQueue.temp.length > 0
+      //     ) {
+      //       portal.talk();
+      //     }
+      //   });
+      // }
     }
     if ((key as OtherKeySet) === "i") {
       if (master.me) {
@@ -462,7 +492,11 @@ export default class EventListener {
   }
 
   handleJoyStickTouchMove(t: TouchEvent) {
-    if (this.effectors.some((effect) => effect.start > 0 && effect.isForce))
+    if (
+      this.effectors.some(
+        (effect) => effect.state === "start" && effect.isForce
+      )
+    )
       return;
 
     const e = t.touches[0];
@@ -614,6 +648,8 @@ export default class EventListener {
     dropCanvas.height = innerHeight;
     uiCanvas.width = innerWidth;
     uiCanvas.height = innerHeight;
+    // effectCanvas.width = innerWidth;
+    // effectCanvas.height = innerHeight;
   }
 
   handleResizeCanvas() {
@@ -622,7 +658,11 @@ export default class EventListener {
   }
 
   handleNpcClick(e: MouseEvent) {
-    if (this.effectors.some((effect) => effect.start > 0 && effect.isForce))
+    if (
+      this.effectors.some(
+        (effect) => effect.state === "start" && effect.isForce
+      )
+    )
       return;
 
     const npc = this.rayPointer.selector?.[0] as NPC;

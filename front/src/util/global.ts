@@ -9,6 +9,7 @@ import ROCK from "/images/rock-1.png";
 import ROCK2 from "/images/rock2.png";
 import WATER from "/images/water.png";
 import BUSH from "/images/bush.png";
+import DEFAULT_AVATAR from "/images/character-r.png";
 
 import NPC from "../model/NPC";
 import Unit from "../model/Unit";
@@ -95,12 +96,14 @@ export const dropCanvas = document.createElement("canvas") as HTMLCanvasElement;
 dropCanvas.id = "drop-layer";
 export const uiCanvas = document.createElement("canvas") as HTMLCanvasElement;
 uiCanvas.id = "ui-layer";
-// export const effectCanvas = document.createElement(
-//   "canvas"
-// ) as HTMLCanvasElement;
+export const effectCanvas = document.createElement(
+  "canvas"
+) as HTMLCanvasElement;
+effectCanvas.id = "effect-layer";
+
 export const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-APP().append(bgCanvas, canvas, dropCanvas, uiCanvas);
+APP().append(bgCanvas, canvas, dropCanvas, uiCanvas, effectCanvas);
 
 export enum FIELD_VALUE {
   block = 0,
@@ -158,3 +161,9 @@ dev.alias = (alias: string) => {
   dev.temp = alias.toUpperCase();
   return dev;
 };
+
+const AVATAR: { [k: string]: CanvasImageSource } = {
+  default: createImage(DEFAULT_AVATAR),
+};
+
+export const PICK_AVATAR = (type: any) => AVATAR[type];

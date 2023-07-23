@@ -9,6 +9,7 @@ import {
   JOYSTICK,
   MAP_PADDING,
   master,
+  PICK_AVATAR,
   SIZE,
 } from "../util/global";
 import Inventory from "./Inventory";
@@ -30,6 +31,7 @@ export default class Unit {
   velocity: number = master.velocity;
   money: number = 0;
   inventory: Inventory = new Inventory();
+  avatar: string;
 
   locate: string = "home";
 
@@ -57,6 +59,10 @@ export default class Unit {
 
   initEngine(engine: Engine) {
     this.engine = engine;
+  }
+
+  setAvatar(type: "default") {
+    this.avatar = type;
   }
 
   setLocate(locate: string) {
@@ -153,16 +159,27 @@ export default class Unit {
         : responsivePositionY - (SIZE.UNIT() * SIZE.SCALE()) / 2
     );
     ctx.fillStyle = this.color;
-    ctx.fillRect(
-      // this.x,
-      // this.y,
-      master.me?.id === this.id ? x : responsivePositionX,
-      master.me?.id === this.id ? y : responsivePositionY,
-      // 0,
-      // 0,
-      SIZE.UNIT() * SIZE.SCALE(),
-      SIZE.UNIT() * SIZE.SCALE()
-    );
+    if (this.avatar) {
+      const image = PICK_AVATAR(this.avatar);
+      ctx.drawImage(
+        image,
+        master.me?.id === this.id ? x : responsivePositionX,
+        (master.me?.id === this.id ? y : responsivePositionY) - 10,
+        SIZE.UNIT() * SIZE.SCALE() + 10,
+        SIZE.UNIT() * SIZE.SCALE() + 10
+      );
+    } else {
+      ctx.fillRect(
+        // this.x,
+        // this.y,
+        master.me?.id === this.id ? x : responsivePositionX,
+        master.me?.id === this.id ? y : responsivePositionY,
+        // 0,
+        // 0,
+        SIZE.UNIT() * SIZE.SCALE(),
+        SIZE.UNIT() * SIZE.SCALE()
+      );
+    }
   }
 
   renderShadow() {

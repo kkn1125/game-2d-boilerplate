@@ -1,6 +1,7 @@
 import Engine from "../../core/Engine";
 import NPC from "../../model/NPC";
 import { COLOR, master } from "../../util/global";
+import EffectList from "../effect/EffectList";
 import PageOff from "../effect/PageOff";
 import PageOn from "../effect/PageOn";
 import WordFloat from "../effect/WordFloat";
@@ -21,34 +22,10 @@ David.addStaticMessage("다시 마을로 가고 싶구나?");
 David.color = COLOR.DAVID;
 
 David.addEventListener("messageend", (engine: Engine) => {
-  PageOff.render(2.5).then(() => {
-    WordFloat.setWord("태초마을")
-      .render(1)
-      .then(() => {
-        WordFloat.reset();
-      });
-    PageOff.reset();
+  EffectList.pageConvert("태초마을", () => {
     engine.changeMap(MapHome);
-    // NpcList.forEach((npc) => {
-    //   if (npc.locate === "home") {
-    //     // npc.setLocate();
-    //   }
-    // });
     master.me?.setLocate("home-bcenter1");
-    PageOn.render(2.5).then(() => {
-      PageOn.reset();
-    });
   });
 });
-
-// .map((npc) => {
-//   if (npc.name === "David") {
-//     npc.addEventListener("messageend", () => {
-
-//     });
-//   }
-
-//   return npc;
-// })
 
 export default David;

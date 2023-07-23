@@ -4,17 +4,19 @@ import User from "./model/User";
 import BuildingList from "./option/BuildingList";
 import PageOff from "./option/effect/PageOff";
 import PageOn from "./option/effect/PageOn";
+import WordFloat from "./option/effect/WordFloat";
 import RedHat from "./option/item/RedHat";
 import MapHome from "./option/map/MapHome";
 import MapInBCenter from "./option/map/MapInBCenter";
 import NpcList from "./option/NpcList";
 import HomeToSunsetHill from "./option/portal/HomeToSunsetHill";
 import PortalList from "./option/PortalList";
-import { master } from "./util/global";
+import { master, SIZE } from "./util/global";
 
 const testUser = new User("test");
 master.me = testUser;
 master.me.money = 0 /* 1_500_000_000 */;
+master.me.avatar = "default";
 
 const engine = new Engine({
   render: {
@@ -39,6 +41,10 @@ engine.addPlayer(testUser);
 master.me.getItem(RedHat(), true);
 master.me.getItem(RedHat(), true);
 master.me.getItem(RedHat(), true);
+
+const effect = new Effector(true);
+
+// PageOff.render()
 
 // setTimeout(() => {
 //   master.me?.dropItem(0, 0);

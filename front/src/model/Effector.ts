@@ -1,19 +1,25 @@
+import { effectCanvas } from "../util/global";
+
 export default class Effector {
-  effectCanvas: HTMLCanvasElement;
+  effectCanvas: HTMLCanvasElement = document.createElement("canvas");
   effectCtx: CanvasRenderingContext2D;
 
-  start: number = 0;
-  end: number = 100;
-
-  temp: number = 0;
-  animate: number | null = null;
   effect: Function;
-  resolver: (value: unknown) => void;
-  isForce: boolean;
   word: string;
+  beforeNum: number = 0;
+  speed: number = 1;
+  isForce = true;
+  count: number = 0;
+  limit: number = 255;
+  delay: number = 0;
+  afterWait: number = 0;
 
-  constructor(force: boolean = false) {
-    this.isForce = force;
+  state: "stop" | "start";
+
+  resolver: (value: any) => void;
+
+  constructor(isForce: boolean = false) {
+    this.isForce = isForce;
   }
 
   setWord(word: string) {
@@ -21,45 +27,45 @@ export default class Effector {
     return this;
   }
 
-  setEffect(effect: Function) {
-    this.effect = effect;
+  setSpeed(speed: number) {
+    this.speed = speed;
+    return this;
   }
 
-  animation(delay: number, time = 0) {
-    this.animate = requestAnimationFrame(this.animation.bind(this, delay));
-    const count = Math.floor(time / 1000);
+  setDelay(delay: number) {
+    this.delay = delay;
+    return this;
+  }
 
-    // if (this.temp !== count) {
-    // }
-    this.effect?.(this.start * delay, this.word);
-    if (this.start >= this.end) {
-      this.effect?.(false);
-      this.resolver(true);
-      cancelAnimationFrame(this.animate);
+  setEffect(effector: Function) {
+    this.effect = effector;
+    return this;
+  }
+
+  setAfterWait(time: number) {
+    this.afterWait = time;
+    return this;
+  }
+
+  animate(time: number) {
+    if (this.count > this.limit) {
+      if (this.afterWait === 0) {
+        this.resolver(true);
+        this.reset();
+      } else {
+        setTimeout(() => {
+          this.resolver(true);
+          this.reset();
+        }, this.afterWait * 1000);
+      }
       return;
     }
+    this.effectCtx.clearRect(0, 0, innerWidth, innerHeight);
+    this.effect.call(this, this.count, this.word);
+    this.count += this.speed;
+    this.beforeNum = time;
 
-    this.start += delay;
-
-    this.temp = count;
-  }
-
-  render(delay = 1) {
-    const effectCanvas = document.createElement("canvas");
-    effectCanvas.id = "effect-layer";
-    this.effectCanvas = effectCanvas;
-    this.effectCtx = this.effectCanvas.getContext(
-      "2d"
-    ) as CanvasRenderingContext2D;
-    document.body.append(this.effectCanvas);
-    this.handleResize();
-    window.addEventListener("resize", this.handleResize.bind(this));
-
-    this.animate = requestAnimationFrame(this.animation.bind(this, delay));
-
-    return new Promise((resolve) => {
-      this.resolver = resolve;
-    });
+    requestAnimationFrame(this.animate.bind(this));
   }
 
   handleResize() {
@@ -67,14 +73,34 @@ export default class Effector {
     this.effectCanvas.height = innerHeight;
   }
 
+  render() {
+    this.handleResize();
+    const ctx = this.effectCanvas.getContext("2d") as CanvasRenderingContext2D;
+    document.body.append(this.effectCanvas);
+    this.effectCtx = ctx;
+    window.addEventListener("resize", this.handleResize.bind(this));
+
+    if (this.delay) {
+      setTimeout(() => {
+        this.state = "start";
+        requestAnimationFrame(this.animate.bind(this));
+      }, this.delay * 1000);
+    } else {
+      this.state = "start";
+      requestAnimationFrame(this.animate.bind(this));
+    }
+    return new Promise((resolve) => {
+      this.resolver = resolve;
+    });
+  }
+
   reset() {
-    // this.effectCtx.clearRect(0, 0, innerWidth, innerHeight);
-    this.start = 0;
-    this.temp = 0;
-    this.animate = null;
+    this.beforeNum = 0;
+    this.count = 0;
+    this.state = "stop";
     setTimeout(() => {
-      window.removeEventListener("resize", this.handleResize.bind(this));
       this.effectCanvas.remove();
+      window.removeEventListener("resize", this.handleResize.bind(this));
     }, 100);
   }
 }

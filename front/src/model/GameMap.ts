@@ -104,50 +104,50 @@ export default class GameMap {
     const bottomRightBlock = binary?.[indexB]?.[indexR];
 
     const collisionType = (
-      type: "block" | "water" | "grass2" | "grass3" | "grass4"
+      type: ("block" | "water" | "grass" | "grass2" | "grass3" | "grass4")[]
     ) => {
       if (!master.me) return;
+      const maps = type.map((tp) => FIELD_VALUE[tp]);
+
+      const includes = (tp: any) => maps.includes(tp);
+
       /* Map 내부 오브젝트에 대한 감지 */
       if (
-        binary[indexT][indexL] === FIELD_VALUE[type] ||
-        binary[indexT][indexR] === FIELD_VALUE[type] ||
-        (topCenterBlock === FIELD_VALUE[type] &&
-          (topLeftBlock === FIELD_VALUE[type] ||
-            topRightBlock === FIELD_VALUE[type]))
+        includes(binary[indexT][indexL]) ||
+        includes(binary[indexT][indexR]) ||
+        (includes(topCenterBlock) &&
+          (includes(topLeftBlock) || includes(topRightBlock)))
       ) {
         // console.log("상 충돌");
         master.me.y += nockbackSpeed;
       }
       if (
-        binary[indexCenterY][indexL] === FIELD_VALUE[type] &&
-        (binary[indexT][indexL] === FIELD_VALUE[type] ||
-          binary[indexB][indexL] === FIELD_VALUE[type] ||
-          (leftCenterBlock === FIELD_VALUE[type] &&
-            (topLeftBlock === FIELD_VALUE[type] ||
-              bottomLeftBlock === FIELD_VALUE[type])))
+        includes(binary[indexCenterY][indexL]) &&
+        (includes(binary[indexT][indexL]) ||
+          includes(binary[indexB][indexL]) ||
+          (includes(leftCenterBlock) &&
+            (includes(topLeftBlock) || includes(bottomLeftBlock))))
       ) {
         // console.log("좌 충돌");
         master.me.x += nockbackSpeed;
       }
       if (
-        binary[indexCenterY][indexR] === FIELD_VALUE[type] &&
-        (binary[indexT][indexR] === FIELD_VALUE[type] ||
-          binary[indexB][indexR] === FIELD_VALUE[type] ||
-          (rightCenterBlock === FIELD_VALUE[type] &&
-            (topRightBlock === FIELD_VALUE[type] ||
-              bottomRightBlock === FIELD_VALUE[type])))
+        includes(binary[indexCenterY][indexR]) &&
+        (includes(binary[indexT][indexR]) ||
+          includes(binary[indexB][indexR]) ||
+          (includes(rightCenterBlock) &&
+            (includes(topRightBlock) || includes(bottomRightBlock))))
       ) {
         // console.log("우 충돌");
         master.me.x -= nockbackSpeed;
       }
       if (
-        binary[indexB][indexL] === FIELD_VALUE[type] ||
-        binary[indexB][indexR] === FIELD_VALUE[type] ||
-        (bottomCenterBlock === FIELD_VALUE[type] &&
-          (bottomLeftBlock === FIELD_VALUE[type] ||
-            bottomRightBlock === FIELD_VALUE[type]))
+        includes(binary[indexB][indexL]) ||
+        includes(binary[indexB][indexR]) ||
+        (includes(bottomCenterBlock) &&
+          (includes(bottomLeftBlock) || includes(bottomRightBlock)))
       ) {
-        // console.log("하 충돌");
+        // console.log("하 충돌", type);
         master.me.y -= nockbackSpeed;
       }
     };
@@ -182,11 +182,12 @@ export default class GameMap {
       }
       return;
     } else {
-      collisionType("block");
-      collisionType("water");
-      collisionType("grass2");
-      collisionType("grass3");
-      collisionType("grass4");
+      collisionType(["block", "grass", "grass2", "grass3", "grass4", "water"]);
+      // collisionType("water");
+      // collisionType("grass");
+      // collisionType("grass2");
+      // collisionType("grass3");
+      // collisionType("grass4");
     }
   }
 

@@ -36,6 +36,10 @@ body,
     position: fixed;
     top: 0;
     left: 0;
+
+    &#effect-layer {
+      pointer-events: none;
+    }
   }
 
   @keyframes slide {

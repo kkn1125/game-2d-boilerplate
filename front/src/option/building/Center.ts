@@ -1,6 +1,7 @@
 import Engine from "../../core/Engine";
 import Building from "../../model/Building";
 import { master } from "../../util/global";
+import EffectList from "../effect/EffectList";
 import PageOff from "../effect/PageOff";
 import PageOn from "../effect/PageOn";
 import WordFloat from "../effect/WordFloat";
@@ -15,18 +16,9 @@ Center.height = -15;
 Center.setPosition(7.85, 5.9);
 
 Center.addEventListener("nearby", (engine: Engine) => {
-  PageOff.render(2.5).then(() => {
-    WordFloat.setWord("센터")
-      .render(1)
-      .then(() => {
-        WordFloat.reset();
-      });
-    PageOff.reset();
+  EffectList.pageConvert("센터", () => {
     engine.changeMap(MapInBCenter);
     master.me?.setLocate("bcenter");
-    PageOn.render(2.5).then(() => {
-      PageOn.reset();
-    });
   });
 });
 

@@ -8,6 +8,7 @@ import UI from "../model/UI";
 import Unit from "../model/Unit";
 import PageOff from "../option/effect/PageOff";
 import PageOn from "../option/effect/PageOn";
+import WordFloat from "../option/effect/WordFloat";
 import {
   COLOR,
   CONTROL,
@@ -69,7 +70,7 @@ export default class Engine {
   }
 
   initEffectors() {
-    this.effectors.push(PageOff, PageOn);
+    this.effectors.push(PageOff, PageOn, WordFloat);
   }
 
   changeMap(map: GameMap) {

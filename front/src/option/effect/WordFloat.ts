@@ -1,29 +1,28 @@
 import Effector from "../../model/Effector";
-import { CAMERA } from "../../util/global";
+import { CAMERA, SIZE } from "../../util/global";
 
-const WordFloat = new Effector(true);
+const WordFloat = new Effector(false);
 
-WordFloat.setEffect((process: number | false, word?: string) => {
-  if (process !== false && word) {
-    WordFloat.effectCtx.clearRect(0, 0, innerWidth, innerHeight);
-    WordFloat.effectCtx.textAlign = `center`;
-    WordFloat.effectCtx.font = `bold 50px monospace`;
+WordFloat.setSpeed(2)
+  .setEffect(function (this: Effector, time: number, word: string) {
+    this.effectCtx.textAlign = "center";
+    this.effectCtx.font = `bold ${Math.floor(innerWidth / 2) * 0.07}px monospace`;
 
-    WordFloat.effectCtx.lineWidth = 5;
-
-    WordFloat.effectCtx.fillStyle = `#000000`;
-    WordFloat.effectCtx.strokeText(
-      word,
-      innerWidth / 2 - 25,
-      innerHeight / 2 + 25
+    this.effectCtx.fillStyle = `#ffffff`;
+    this.effectCtx.fillText(
+      word.toUpperCase(),
+      innerWidth / 2,
+      innerHeight / 2
     );
-    WordFloat.effectCtx.fillStyle = `#ffffff`;
-    WordFloat.effectCtx.fillText(
-      word,
-      innerWidth / 2 - 25,
-      innerHeight / 2 + 25
+
+    this.effectCtx.lineWidth = 2;
+    this.effectCtx.strokeStyle = `#000000`;
+    this.effectCtx.strokeText(
+      word.toUpperCase(),
+      innerWidth / 2,
+      innerHeight / 2
     );
-  }
-});
+  })
+  .setAfterWait(1);
 
 export default WordFloat;
