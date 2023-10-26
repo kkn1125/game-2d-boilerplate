@@ -28,7 +28,10 @@ export default class Unit {
   y: number = 0;
   state: string = "hold";
   color: COLOR = COLOR.UNIT;
-  velocity: number = master.velocity;
+  velocity: { x: number; y: number } = {
+    x: 0,
+    y: 0,
+  };
   money: number = 0;
   inventory: Inventory = new Inventory();
   avatar: string;
@@ -106,10 +109,10 @@ export default class Unit {
   move() {
     if (master.me?.id === this.id) {
       if (JOYSTICK["w"] || JOYSTICK["s"] || JOYSTICK["a"] || JOYSTICK["d"]) {
-        JOYSTICK["w"] && (this.y -= this.velocity);
-        JOYSTICK["s"] && (this.y += this.velocity);
-        JOYSTICK["a"] && (this.x -= this.velocity);
-        JOYSTICK["d"] && (this.x += this.velocity);
+        JOYSTICK["w"] && (this.y -= this.velocity.y);
+        JOYSTICK["s"] && (this.y += this.velocity.y);
+        JOYSTICK["a"] && (this.x -= this.velocity.x);
+        JOYSTICK["d"] && (this.x += this.velocity.x);
       }
     }
   }

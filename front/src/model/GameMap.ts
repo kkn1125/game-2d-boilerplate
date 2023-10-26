@@ -5,6 +5,7 @@ import {
   COLOR,
   CONTROL,
   FIELD_VALUE,
+  JOYSTICK,
   MAP_PADDING,
   master,
   SIZE,
@@ -89,7 +90,7 @@ export default class GameMap {
 
     const blockRight = indexL * blockSize;
 
-    const nockbackSpeed = master.velocity * 2;
+    const nockbackSpeed = master.velocity * 1.1;
 
     /* center */
     const topCenterBlock = binary?.[indexT]?.[indexCenterX];
@@ -111,44 +112,148 @@ export default class GameMap {
 
       const includes = (tp: any) => maps.includes(tp);
 
+      //left
+      // console.log(
+      //   includes(binary[indexT][indexL]) && includes(binary[indexB][indexL])
+      // );
+
+      // right
+      // includes(binary[indexT][indexR]) && includes(binary[indexB][indexR]);
+
+      // top
+      // console.log(includes(binary[indexT][indexL]) && includes(binary[indexT][indexR]))
+
+      //bottom
+      // console.log(includes(binary[indexB][indexL]) && includes(binary[indexB][indexR]))
+
       /* Map 내부 오브젝트에 대한 감지 */
+      // if (
+      //   includes(binary[indexT][indexL]) ||
+      //   includes(binary[indexT][indexR]) ||
+      //   (includes(topCenterBlock) &&
+      //     (includes(topLeftBlock) || includes(topRightBlock)))
+      // ) {
+      //   // console.log("상 충돌");
+      //   // if((JOYSTICK['w'] ))
+      //   master.me.y += nockbackSpeed;
+      // }
+      // if (
+      //   includes(binary[indexB][indexL]) ||
+      //   includes(binary[indexB][indexR]) ||
+      //   (includes(bottomCenterBlock) &&
+      //     (includes(bottomLeftBlock) || includes(bottomRightBlock)))
+      // ) {
+      //   // console.log("하 충돌", type);
+      //   master.me.y -= nockbackSpeed;
+      // }
+      // if (
+      //   includes(binary[indexCenterY][indexL]) &&
+      //   (includes(binary[indexT][indexL]) ||
+      //     includes(binary[indexB][indexL]) ||
+      //     (includes(leftCenterBlock) &&
+      //       (includes(topLeftBlock) || includes(bottomLeftBlock))))
+      // ) {
+      //   // console.log("좌 충돌");
+      //   master.me.x += nockbackSpeed;
+      // }
+      // if (
+      //   includes(binary[indexCenterY][indexR]) &&
+      //   (includes(binary[indexT][indexR]) ||
+      //     includes(binary[indexB][indexR]) ||
+      //     (includes(rightCenterBlock) &&
+      //       (includes(topRightBlock) || includes(bottomRightBlock))))
+      // ) {
+      //   // console.log("우 충돌");
+      //   master.me.x -= nockbackSpeed;
+      // }
+
       if (
-        includes(binary[indexT][indexL]) ||
-        includes(binary[indexT][indexR]) ||
-        (includes(topCenterBlock) &&
-          (includes(topLeftBlock) || includes(topRightBlock)))
+        includes(binary[indexT][indexL]) &&
+        includes(binary[indexT][indexR])
       ) {
         // console.log("상 충돌");
+        // if((JOYSTICK['w'] ))
+        // JOYSTICK['w']=false
         master.me.y += nockbackSpeed;
+        master.me.velocity.y = 0;
       }
       if (
-        includes(binary[indexCenterY][indexL]) &&
-        (includes(binary[indexT][indexL]) ||
-          includes(binary[indexB][indexL]) ||
-          (includes(leftCenterBlock) &&
-            (includes(topLeftBlock) || includes(bottomLeftBlock))))
-      ) {
-        // console.log("좌 충돌");
-        master.me.x += nockbackSpeed;
-      }
-      if (
-        includes(binary[indexCenterY][indexR]) &&
-        (includes(binary[indexT][indexR]) ||
-          includes(binary[indexB][indexR]) ||
-          (includes(rightCenterBlock) &&
-            (includes(topRightBlock) || includes(bottomRightBlock))))
-      ) {
-        // console.log("우 충돌");
-        master.me.x -= nockbackSpeed;
-      }
-      if (
-        includes(binary[indexB][indexL]) ||
-        includes(binary[indexB][indexR]) ||
-        (includes(bottomCenterBlock) &&
-          (includes(bottomLeftBlock) || includes(bottomRightBlock)))
+        includes(binary[indexB][indexL]) &&
+        includes(binary[indexB][indexR])
       ) {
         // console.log("하 충돌", type);
         master.me.y -= nockbackSpeed;
+        master.me.velocity.y = 0;
+      }
+      if (
+        includes(binary[indexT][indexL]) &&
+        includes(binary[indexB][indexL])
+      ) {
+        // console.log("좌 충돌");
+        master.me.x += nockbackSpeed;
+        master.me.velocity.x = 0;
+      }
+      if (
+        includes(binary[indexT][indexR]) &&
+        includes(binary[indexB][indexR])
+      ) {
+        // console.log("우 충돌");
+        master.me.x -= nockbackSpeed;
+        master.me.velocity.x = 0;
+      }
+
+      // 상좌
+      if (
+        includes(binary[indexT][indexL]) &&
+        includes(binary[indexT][indexR]) &&
+        includes(binary[indexT][indexL]) &&
+        includes(binary[indexB][indexL])
+      ) {
+        master.me.x += nockbackSpeed;
+        master.me.y += nockbackSpeed;
+
+        master.me.velocity.y = 0;
+        master.me.velocity.x = 0;
+      }
+      // 상우
+      if (
+        includes(binary[indexT][indexL]) &&
+        includes(binary[indexT][indexR]) &&
+        includes(binary[indexT][indexR]) &&
+        includes(binary[indexB][indexR])
+      ) {
+        master.me.x -= nockbackSpeed;
+        master.me.y += nockbackSpeed;
+
+        master.me.velocity.y = 0;
+        master.me.velocity.x = 0;
+      }
+
+      // 하좌
+      if (
+        includes(binary[indexB][indexL]) &&
+        includes(binary[indexB][indexR]) &&
+        includes(binary[indexT][indexL]) &&
+        includes(binary[indexB][indexL])
+      ) {
+        master.me.x += nockbackSpeed;
+        master.me.y -= nockbackSpeed;
+
+        master.me.velocity.y = 0;
+        master.me.velocity.x = 0;
+      }
+      // 하우
+      if (
+        includes(binary[indexB][indexL]) &&
+        includes(binary[indexB][indexR]) &&
+        includes(binary[indexT][indexR]) &&
+        includes(binary[indexB][indexR])
+      ) {
+        master.me.x += nockbackSpeed;
+        master.me.y += nockbackSpeed;
+
+        master.me.velocity.y = 0;
+        master.me.velocity.x = 0;
       }
     };
 

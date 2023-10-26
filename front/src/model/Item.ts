@@ -127,7 +127,11 @@ export default class Item {
   talkExit() {
     UI.clearChatModals();
     this.chatQueue.stop();
-    if (master.me) master.me.velocity = master.velocity;
+    if (master.me)
+      [master.me.velocity.x, master.me.velocity.y] = [
+        master.velocity,
+        master.velocity,
+      ];
   }
 
   questionRender() {

@@ -135,7 +135,7 @@ export default class EventListener {
       JOYSTICK["d"] = false;
       return;
     }
-
+    console.log(JOYSTICK);
     if ((key as OtherKeySet) === " ") {
       const u = Array.from(UNIT.NPC.values()).find(
         (npc) => npc.nearBy && master.me?.locate === npc.locate
@@ -264,10 +264,13 @@ export default class EventListener {
       if (CONTROL.SCALE - CONTROL.ZOOM_RATIO < CONTROL.MIN_ZOOM) return;
       CONTROL.SCALE -= CONTROL.ZOOM_RATIO;
     }
-    if (JOYSTICK.hasOwnProperty(key) && !UI.isOpenModal()) {
+    if (JOYSTICK.hasOwnProperty(key)) {
       JOYSTICK[key] = true;
+    }
+    if (!UI.isOpenModal()) {
       if (master.me) {
-        master.me.velocity = master.velocity;
+        master.me.velocity.x = master.velocity;
+        master.me.velocity.y = master.velocity;
       }
     }
   }
@@ -279,7 +282,8 @@ export default class EventListener {
     }
     if (Object.values(JOYSTICK).every((_) => _ === false)) {
       if (master.me) {
-        master.me.velocity = 0;
+        master.me.velocity.x = 0;
+        master.me.velocity.y = 0;
       }
     }
   }
@@ -322,7 +326,8 @@ export default class EventListener {
       this.mobJoystick.ball = null;
       this.mobJoystick.boundary = null;
       if (master.me) {
-        master.me.velocity = 0;
+        master.me.velocity.x = 0;
+        master.me.velocity.y = 0;
       }
 
       JOYSTICK["w"] = false;
@@ -342,7 +347,8 @@ export default class EventListener {
       this.mobJoystick.ball = null;
       this.mobJoystick.boundary = null;
       if (master.me) {
-        master.me.velocity = 0;
+        master.me.velocity.x = 0;
+        master.me.velocity.y = 0;
       }
 
       JOYSTICK["w"] = false;
@@ -400,7 +406,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 30 || value > 330) {
         // top
@@ -411,7 +420,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 330 && value > 300) {
         // right top
@@ -422,7 +434,10 @@ export default class EventListener {
         JOYSTICK["d"] = true;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 300 && value > 240) {
         // right
@@ -433,7 +448,10 @@ export default class EventListener {
         JOYSTICK["d"] = true;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 240 && value > 210) {
         // right bottom
@@ -443,7 +461,10 @@ export default class EventListener {
         JOYSTICK["s"] = true;
         JOYSTICK["d"] = true;
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 210 && value > 150) {
         // bottom
@@ -454,7 +475,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 150 && value > 120) {
         // left bottom
@@ -465,7 +489,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 120 && value > 60) {
         // left
@@ -476,7 +503,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       }
 
@@ -548,7 +578,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 30 || value > 330) {
         // top
@@ -559,7 +592,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 330 && value > 300) {
         // right top
@@ -570,7 +606,10 @@ export default class EventListener {
         JOYSTICK["d"] = true;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 300 && value > 240) {
         // right
@@ -581,7 +620,10 @@ export default class EventListener {
         JOYSTICK["d"] = true;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 240 && value > 210) {
         // right bottom
@@ -591,7 +633,10 @@ export default class EventListener {
         JOYSTICK["s"] = true;
         JOYSTICK["d"] = true;
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 210 && value > 150) {
         // bottom
@@ -602,7 +647,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 150 && value > 120) {
         // left bottom
@@ -613,7 +661,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       } else if (value < 120 && value > 60) {
         // left
@@ -624,7 +675,10 @@ export default class EventListener {
         JOYSTICK["d"] = false;
 
         if (master.me) {
-          master.me.velocity = master.velocity;
+          [master.me.velocity.x, master.me.velocity.y] = [
+            master.velocity,
+            master.velocity,
+          ];
         }
       }
 
@@ -668,12 +722,12 @@ export default class EventListener {
     const npc = this.rayPointer.selector?.[0] as NPC;
     if (npc && npc.nearBy && npc.chatQueue.temp.length === 0) {
       npc.talk();
-      if (master.me) master.me.velocity = 0;
+      if (master.me) [master.me.velocity.x, master.me.velocity.y] = [0, 0];
     }
     const portal = this.rayPointer.pSelector?.[0] as Portal;
     if (portal && portal.nearBy && portal.chatQueue.temp.length === 0) {
       portal.talk();
-      if (master.me) master.me.velocity = 0;
+      if (master.me) [master.me.velocity.x, master.me.velocity.y] = [0, 0];
     }
   }
 }
