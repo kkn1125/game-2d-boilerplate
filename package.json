@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "socket": "cross-env NODE_ENV=development nodemon --watch-path=\"src/**\" --ext \"ts,json\" --ignore \"src/**/*.test.ts\" --exec \"ts-node src/index.ts\"",
-    "front": "cd front/ && npm run dev",
-    "dev": "concurrently --kill-others-on-fail \"npm run socket\" \"npm run front\"",
+    "front": "cd front/ && pnpm run dev",
+    "dev": "concurrently --kill-others-on-fail \"pnpm run socket\" \"pnpm run front\"",
     "build": "gulp dev",
     "preview": "node dist/src/index.js"
   },
