@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- image prefetch -->
+    <link rel="prerender" href="/game-2d-boilerplate/profiles/npc/basic.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/profiles/npc/chonjang.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/profiles/npc/gm.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/profiles/npc/namoo.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/profiles/portal/basic.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/bg/question-bg.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/bush.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/character-r.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/default_npc.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/grass-1.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/grass-2.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/grass-3.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/grass-4.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/grass.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/road.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/rock-1.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/rock.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/rock2.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/tree.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/fields/water.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/monster/monkey-front.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/monster/slime-front.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/monster/slime.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/object/item/banana.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/object/item/gun.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/object/item/sword.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/object/piece/bullet.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/object/none.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/player/student01-back.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/player/student01-front.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/player/student01-left.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/player/student01-right.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/player/student01.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/portal/basic.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/tileset/decorate.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/tileset/object-opacity.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/tileset/object.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/tileset/tileset.png" as="image" />
+    <link rel="prerender" href="/game-2d-boilerplate/images/tileset/tileset2.png" as="image" />
+
+    <!-- <link rel="prefetch" href="/src/preload.ts" as="script" >
+    <link rel="prefetch" href="/src/main.ts" as="script" >
+    <link rel="prefetch" href="/src/config/game-palette.conf.ts" as="script" >
+    <link rel="prefetch" href="/src/config/game.conf.ts" as="script" >
+    <link rel="prefetch" href="/src/config/socket.conf.ts" as="script" >
+    <link rel="prefetch" href="/src/core/engine.ts" as="script" >
+    <link rel="prefetch" href="/src/core/renderer/ui.ts" as="script" >
+    <link rel="prefetch" href="/src/core/game-map/map.manager.ts" as="script" >
+    <link rel="prefetch" href="/src/core/events/event.manager.ts" as="script" >
+    <link rel="prefetch" href="/src/core/emitter/event.broker.ts" as="script" >
+    <link rel="prefetch" href="/src/core/emitter/publisher.ts" as="script" >
+    <link rel="prefetch" href="/src/core/emitter/subscriber.ts" as="script" >
+    <link rel="prefetch" href="/src/core/common/building.profile.ts" as="script" >
+    <link rel="prefetch" href="/src/core/common/npc.profile.ts" as="script" >
+    <link rel="prefetch" href="/src/core/common/portal.profile.ts" as="script" >
+    <link rel="prefetch" href="/src/core/common/feature.ts" as="script" >
+    <link rel="prefetch" href="/src/core/common/global.locate.ts" as="script" >
+    <link rel="prefetch" href="/src/core/common/global.ts" as="script" > -->
+
+    <!-- <script src="/src/preload.ts" type="module"></script> -->
+
+    <title>2D RPG</title>
+    <script type="module" crossorigin src="/game-2d-boilerplate/assets/index-Bsm8ivJo.js"></script>
+    <link rel="stylesheet" crossorigin href="/game-2d-boilerplate/assets/index-CyysHSl6.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
